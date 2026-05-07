@@ -3,11 +3,11 @@ package mx.uv.comedor.model;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-/**
- * Un pago por pedido.
- * - EFECTIVO / TARJETA → estudiante o docente paga todo
- * - BECA               → becado, solo platillos tipo=MENU gratis
- * - MIXTO              → becado con menú (beca) + carta (efectivo/tarjeta)
+/*
+  Un pago por pedido.
+  - EFECTIVO / TARJETA → estudiante o docente paga todo
+  - BECA               → becado, solo platillos tipo=MENU gratis
+  - MIXTO              → becado con menú (beca) + carta (efectivo/tarjeta)
  */
 public class Pago {
 
@@ -37,7 +37,7 @@ public class Pago {
         this.fechaPago      = LocalDateTime.now();
     }
 
-    // ── Métodos de negocio ─────────────────────────────────────────
+    // Métodos de negocio
 
     public boolean procesarPago() {
         // La lógica real se hace en PagoDAO
@@ -47,9 +47,9 @@ public class Pago {
         return true;
     }
 
-    /**
-     * Calcula el descuento que aplica la beca.
-     * Solo renglones con platillo tipo=MENU y becado con beca vigente.
+    /*
+      Calcula el descuento que aplica la beca.
+      Solo renglones con platillo tipo=MENU y becado con beca vigente.
      */
     public BigDecimal aplicarDescuentoBeca(BigDecimal subtotalMenu) {
         return subtotalMenu; // el descuento es el 100% del menú para becados
@@ -63,7 +63,7 @@ public class Pago {
         this.estado = EstPagoEnum.RECHAZADO;
     }
 
-    // ── Getters y Setters ──────────────────────────────────────────
+    // Getters y Setters
 
     public Long getIdPago()                  { return idPago; }
     public void setIdPago(Long id)           { this.idPago = id; }

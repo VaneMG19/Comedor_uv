@@ -2,9 +2,9 @@ package mx.uv.comedor.model;
 
 import java.math.BigDecimal;
 
-/**
- * POJO que representa la tabla 'informacion_nutricional'.
- * Relación 1:1 con Platillo.
+/*
+  POJO que representa la tabla 'informacion_nutricional'.
+  Relación 1:1 con Platillo.
  */
 public class InformacionNutricional {
 

@@ -4,17 +4,11 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-/**
- * Utilidad para obtener conexiones a PostgreSQL.
- * ─────────────────────────────────────────────
- * CAMBIA los valores de PORT y PASSWORD según tu instalación.
- * Los demás valores normalmente no necesitan cambio.
- */
+
 public class DBConnection {
 
-    // ── Cambia estos dos valores ──────────────────────────────────
-    private static final String PORT     = "5433";         // 5432 o 5433
-    private static final String PASSWORD = "1234";  // tu contraseña de PostgreSQL
+    private static final String PORT     = "5433";         //
+    private static final String PASSWORD = "1234";  //
     // ─────────────────────────────────────────────────────────────
 
     private static final String HOST     = "localhost";
@@ -34,15 +28,7 @@ public class DBConnection {
         }
     }
 
-    /**
-     * Retorna una nueva conexión a la base de datos.
-     * Úsala siempre dentro de un try-with-resources para
-     * que se cierre automáticamente:
-     *
-     *   try (Connection con = DBConnection.getConnection()) {
-     *       ...
-     *   }
-     */
+
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(URL, USER, PASSWORD);
     }

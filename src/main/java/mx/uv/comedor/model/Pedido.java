@@ -5,10 +5,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * POJO que representa la tabla 'pedido'.
- * tipo=INMEDIATO → recoge en el momento
- * tipo=ANTICIPADO → tiene ProgramacionPedido asociada
+/*
+  POJO que representa la tabla 'pedido'.
+  tipo=INMEDIATO recoge en el momento
+  tipo=ANTICIPADO tiene ProgramacionPedido asociada
  */
 public class Pedido {
 
@@ -40,11 +40,11 @@ public class Pedido {
         this.total         = BigDecimal.ZERO;
     }
 
-    // ── Métodos de negocio ─────────────────────────────────────────
+    // Métodos de negocio
 
-    /**
-     * Recalcula subtotal, descuentoBeca y total a partir de los detalles.
-     * Llamar antes de persistir.
+    /*
+      Recalcula subtotal, descuentoBeca y total a partir de los detalles.
+      Llamar antes de persistir.
      */
     public void calcularTotal() {
         this.subtotal      = BigDecimal.ZERO;
@@ -73,22 +73,22 @@ public class Pedido {
         this.estado = EstadoPedidoEnum.PREPARANDO;
     }
 
-    /**
-     * Indica si este pedido tiene programación de recogida.
+    /*
+      Indica si este pedido tiene programación de recogida.
      */
     public boolean esProgramado() {
         return tipo == TipoPedidoEnum.ANTICIPADO;
     }
 
-    /**
-     * Agrega un detalle al pedido.
+    /*
+      Agrega un detalle al pedido.
      */
     public void agregarDetalle(DetallePedido detalle) {
         detalle.setIdPedido(this.idPedido);
         detalles.add(detalle);
     }
 
-    // ── Getters y Setters ──────────────────────────────────────────
+    // Getters y Setters
 
     public Long getIdPedido()               { return idPedido; }
     public void setIdPedido(Long id)        { this.idPedido = id; }

@@ -2,9 +2,9 @@ package mx.uv.comedor.model;
 
 import java.time.LocalDateTime;
 
-/**
- * Respuesta del administrador a una calificación.
- * Relación 1:1 con Calificacion.
+/*
+  Respuesta del administrador a una calificación.
+  Relación 1:1 con Calificacion.
  */
 public class RespuestaCalificacion {
 

@@ -3,10 +3,10 @@ package mx.uv.comedor.model;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-/**
- * Registro de cada cambio de stock.
- * El trigger en BD actualiza stock_actual del ingrediente
- * automáticamente al insertar este movimiento.
+/*
+  Registro de cada cambio de stock.
+  El trigger en BD actualiza stock_actual del ingrediente
+  automáticamente al insertar este movimiento.
  */
 public class MovimientoInventario {
 
@@ -34,7 +34,7 @@ public class MovimientoInventario {
         this.fecha         = LocalDateTime.now();
     }
 
-    // ── Getters y Setters ──────────────────────────────────────────
+    // Getters y Setters
 
     public Long getIdMov()                    { return idMov; }
     public void setIdMov(Long id)             { this.idMov = id; }

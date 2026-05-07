@@ -3,10 +3,10 @@ package mx.uv.comedor.model;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-/**
- * Resumen estadístico de un platillo.
- * Se recalcula automáticamente vía trigger al insertar/actualizar calificaciones.
- * 1:1 con Platillo — se crea automáticamente al insertar el platillo.
+/*
+  Resumen estadístico de un platillo.
+  Se recalcula automáticamente vía trigger al insertar/actualizar calificaciones.
+  1:1 con Platillo — se crea automáticamente al insertar el platillo.
  */
 public class EstadisticaPlatillo {
 
@@ -20,10 +20,10 @@ public class EstadisticaPlatillo {
 
     public EstadisticaPlatillo() {}
 
-    // ── Métodos de negocio ─────────────────────────────────────────
+    //  Métodos de negocio
 
-    /**
-     * Retorna el promedio como estrellas para los JSP.
+    /*
+      Retorna el promedio como estrellas para los JSP.
      */
     public String getPromedioEstrellas() {
         if (promedioCalif == null || totalCalif == 0) return "Sin calificaciones";
@@ -33,7 +33,7 @@ public class EstadisticaPlatillo {
                String.format(" (%.1f)", promedioCalif.doubleValue());
     }
 
-    // ── Getters y Setters ──────────────────────────────────────────
+    // Getters y Setters
 
     public Long getIdEst()                       { return idEst; }
     public void setIdEst(Long id)                { this.idEst = id; }

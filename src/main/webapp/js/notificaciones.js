@@ -1,7 +1,6 @@
-/**
- * notificaciones.js
- * Polling de notificaciones en tiempo real.
- * Incluir en el layout principal: <script src="${pageContext.request.contextPath}/js/notificaciones.js"></script>
+/*
+  notificaciones.js
+  Polling de notificaciones en tiempo real.
  */
 
 const NotificacionesPolling = (() => {
@@ -9,12 +8,12 @@ const NotificacionesPolling = (() => {
     const INTERVALO_MS = 10000; // cada 10 segundos
     let intervaloId    = null;
 
-    // ── Elementos del DOM ──────────────────────────────────────────
+    // Elementos del DOM
     const getBadge  = () => document.getElementById('notif-badge');
     const getCampana = () => document.getElementById('notif-campana');
     const getLista  = () => document.getElementById('notif-lista');
 
-    // ── Iniciar polling ───────────────────────────────────────────
+    // Iniciar polling
     function iniciar(contextPath) {
         const url = `${contextPath}/notificaciones/nuevas`;
         consultar(url);
@@ -25,7 +24,7 @@ const NotificacionesPolling = (() => {
         if (intervaloId) clearInterval(intervaloId);
     }
 
-    // ── Consultar al servidor ─────────────────────────────────────
+    // Consultar al servidor
     async function consultar(url) {
         try {
             const resp = await fetch(url, { credentials: 'same-origin' });
@@ -44,7 +43,7 @@ const NotificacionesPolling = (() => {
         }
     }
 
-    // ── Actualizar badge (número en la campana) ───────────────────
+    //  Actualizar badge (número en la campana)
     function actualizarBadge(total) {
         const badge = getBadge();
         if (!badge) return;
@@ -57,7 +56,7 @@ const NotificacionesPolling = (() => {
         }
     }
 
-    // ── Toast: notificación flotante ──────────────────────────────
+    // Toast: notificación flotante
     function mostrarToast(notif) {
         // Evitar duplicados — verificar si ya se mostró este ID
         const yaVisto = sessionStorage.getItem(`notif_${notif.id}`);
@@ -93,7 +92,7 @@ const NotificacionesPolling = (() => {
         marcarLeida(notif.id);
     }
 
-    // ── Actualizar lista desplegable ──────────────────────────────
+    // Actualizar lista desplegable
     function actualizarLista(notificaciones) {
         const lista = getLista();
         if (!lista) return;
@@ -109,7 +108,7 @@ const NotificacionesPolling = (() => {
         `).join('');
     }
 
-    // ── Marcar leída ──────────────────────────────────────────────
+    // Marcar leída
     async function marcarLeida(id) {
         const ctx = document.body.dataset.contextPath || '';
         const form = new FormData();

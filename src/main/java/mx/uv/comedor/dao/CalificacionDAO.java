@@ -12,17 +12,17 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * DAO para calificacion, respuesta_calificacion y estadistica_platillo.
+/*
+  DAO para calificacion, respuesta_calificacion y estadistica_platillo.
  */
 public class CalificacionDAO {
 
-    // ── Calificacion ──────────────────────────────────────────────
+    // Calificacion
 
-    /**
-     * Inserta una calificación.
-     * El trigger recalcula estadistica_platillo automáticamente.
-     * Lanza excepción si el pedido no está ENTREGADO (constraint en BD).
+    /*
+      Inserta una calificación.
+      El trigger recalcula estadistica_platillo automáticamente.
+      Lanza excepción si el pedido no está ENTREGADO (constraint en BD).
      */
     public Long insertar(Calificacion c) throws SQLException {
         String sql = """
@@ -47,8 +47,8 @@ public class CalificacionDAO {
         }
     }
 
-    /**
-     * Verifica si un pedido ya fue calificado.
+    /*
+      Verifica si un pedido ya fue calificado.
      */
     public boolean pedidoCalificado(Long idPedido) throws SQLException {
         String sql = "SELECT COUNT(*) FROM calificacion WHERE id_pedido = ?";
@@ -148,7 +148,7 @@ public class CalificacionDAO {
         }
     }
 
-    // ── RespuestaCalificacion ─────────────────────────────────────
+    // RespuestaCalificacion
 
     public Long insertarRespuesta(RespuestaCalificacion r) throws SQLException {
         String sql = """
@@ -199,7 +199,7 @@ public class CalificacionDAO {
         }
     }
 
-    // ── EstadisticaPlatillo ───────────────────────────────────────
+    // EstadisticaPlatillo
 
     public EstadisticaPlatillo obtenerEstadistica(Long idPlatillo)
             throws SQLException {
@@ -241,7 +241,7 @@ public class CalificacionDAO {
         return lista;
     }
 
-    // ── HELPERS ───────────────────────────────────────────────────
+    //
 
     private Calificacion mapear(ResultSet rs) throws SQLException {
         Calificacion c = new Calificacion();

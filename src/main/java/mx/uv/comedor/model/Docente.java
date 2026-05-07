@@ -1,8 +1,8 @@
 package mx.uv.comedor.model;
 
-/**
- * POJO que representa la tabla 'docente'.
- * Paga con efectivo o tarjeta — sin saldo UV ni beca.
+/*
+ POJO que representa la tabla 'docente'.
+  Paga con efectivo o tarjeta — sin saldo UV ni beca.
  */
 public class Docente {
 
@@ -26,13 +26,13 @@ public class Docente {
         this.categoria          = categoria;
     }
 
-    // ── Métodos de negocio ─────────────────────────────────────────
+    //  Métodos de negocio
 
     public void realizarPedido() {
         // Implementado en PedidoServlet
     }
 
-    // ── Getters y Setters ──────────────────────────────────────────
+    // Getters y Setters
 
     public Long getIdDocente() { return idDocente; }
     public void setIdDocente(Long idDocente) { this.idDocente = idDocente; }

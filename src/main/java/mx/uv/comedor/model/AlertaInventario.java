@@ -2,9 +2,9 @@ package mx.uv.comedor.model;
 
 import java.time.LocalDateTime;
 
-/**
- * Alerta generada automáticamente por el trigger trg_verificar_stock
- * cuando el stock de un ingrediente cae por debajo del mínimo.
+/*
+ Alerta generada automáticamente por el trigger trg_verificar_stock
+  cuando el stock de un ingrediente cae por debajo del mínimo.
  */
 public class AlertaInventario {
 
@@ -21,7 +21,7 @@ public class AlertaInventario {
 
     public AlertaInventario() {}
 
-    // ── Métodos de negocio ─────────────────────────────────────────
+    //  Métodos de negocio
 
     public void atender() {
         this.atendida = true;
@@ -32,13 +32,13 @@ public class AlertaInventario {
      */
     public String getIconoNivel() {
         return switch (nivel) {
-            case CRITICO -> "🔴";
-            case WARNING -> "🟡";
-            case INFO    -> "🔵";
+            case CRITICO -> "R";
+            case WARNING -> "V";
+            case INFO    -> "A";
         };
     }
 
-    // ── Getters y Setters ──────────────────────────────────────────
+    //  Getters y Setters
 
     public Long getIdAlerta()                  { return idAlerta; }
     public void setIdAlerta(Long id)           { this.idAlerta = id; }

@@ -1,6 +1,6 @@
 package mx.uv.comedor.model;
 
-/**
+/*
  * POJO que representa la tabla 'administrador'.
  */
 public class Administrador {
@@ -20,7 +20,7 @@ public class Administrador {
         this.departamento = departamento;
     }
 
-    // ── Métodos de negocio ─────────────────────────────────────────
+    // Métodos de negocio
 
     public boolean esSuperAdmin() {
         return nivelAcceso == 3;
@@ -34,7 +34,7 @@ public class Administrador {
         // Implementado en ReporteServlet
     }
 
-    // ── Getters y Setters ──────────────────────────────────────────
+    //  Getters y Setters
 
     public Long getIdAdmin() { return idAdmin; }
     public void setIdAdmin(Long idAdmin) { this.idAdmin = idAdmin; }

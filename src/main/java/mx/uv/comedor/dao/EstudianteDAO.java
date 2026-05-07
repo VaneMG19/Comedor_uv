@@ -11,13 +11,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * DAO para la tabla 'estudiante'.
+  DAO para la tabla 'estudiante'.
  */
 public class EstudianteDAO {
 
     private final UsuarioDAO usuarioDAO = new UsuarioDAO();
 
-    // ── CREATE
+    // CREATE
 
     public Long insertar(Estudiante e) throws SQLException {
         String sql = """
@@ -40,7 +40,7 @@ public class EstudianteDAO {
         }
     }
 
-    // ── READ
+    //  READ
 
     public Estudiante buscarPorId(Long idEstudiante) throws SQLException {
         String sql = """
@@ -119,7 +119,7 @@ public class EstudianteDAO {
         return lista;
     }
 
-    // ── UPDATE
+    //  UPDATE
 
     public boolean actualizar(Estudiante e) throws SQLException {
         String sql = """
@@ -138,7 +138,7 @@ public class EstudianteDAO {
         }
     }
 
-    // ── HELPER ────────────────────────────────────────────────────
+    //
 
     private Estudiante mapear(ResultSet rs) throws SQLException {
         Estudiante e = new Estudiante();

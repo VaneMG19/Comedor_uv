@@ -5,9 +5,9 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 
-/**
- * Solo existe cuando pedido.tipo = ANTICIPADO.
- * Guarda cuándo y dónde el usuario recogerá su pedido.
+/*
+  Solo existe cuando pedido.tipo = ANTICIPADO.
+  Guarda cuándo y dónde el usuario recogerá su pedido.
  */
 public class ProgramacionPedido {
 
@@ -33,11 +33,11 @@ public class ProgramacionPedido {
         this.recordatorioEnviado = false;
     }
 
-    // ── Métodos de negocio ─────────────────────────────────────────
+    //  Métodos de negocio
 
-    /**
-     * Calcula los minutos que faltan para la hora de recogida.
-     * Retorna negativo si ya pasó la hora.
+    /*
+      Calcula los minutos que faltan para la hora de recogida.
+      Retorna negativo si ya pasó la hora.
      */
     public long calcularTiempoRestante() {
         LocalDateTime horaRecogidaDT =
@@ -45,8 +45,8 @@ public class ProgramacionPedido {
         return ChronoUnit.MINUTES.between(LocalDateTime.now(), horaRecogidaDT);
     }
 
-    /**
-     * Verifica si ya es momento de enviar el recordatorio.
+    /*
+      Verifica si ya es momento de enviar el recordatorio.
      */
     public boolean debeEnviarRecordatorio() {
         long minutos = calcularTiempoRestante();
@@ -67,7 +67,7 @@ public class ProgramacionPedido {
         return calcularTiempoRestante() < -15; // 15 min de gracia
     }
 
-    // ── Getters y Setters ──────────────────────────────────────────
+    // Getters y Setters
 
     public Long getIdProgramacion()           { return idProgramacion; }
     public void setIdProgramacion(Long id)    { this.idProgramacion = id; }

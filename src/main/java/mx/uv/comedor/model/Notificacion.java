@@ -2,10 +2,10 @@ package mx.uv.comedor.model;
 
 import java.time.LocalDateTime;
 
-/**
- * Notificación enviada a un usuario.
- * Las notificaciones se crean automáticamente desde triggers de BD.
- * El frontend las consulta via polling (GET /notificaciones/nuevas).
+/*
+  Notificación enviada a un usuario.
+  Las notificaciones se crean automáticamente desde triggers de BD.
+  El frontend las consulta via polling (GET /notificaciones/nuevas).
  */
 public class Notificacion {
 
@@ -23,15 +23,15 @@ public class Notificacion {
 
     public Notificacion() {}
 
-    // ── Métodos de negocio ─────────────────────────────────────────
+    // Métodos de negocio
 
     public void marcarLeida() {
         this.leida        = true;
         this.fechaLectura = LocalDateTime.now();
     }
 
-    /**
-     * Retorna un ícono según el tipo para los JSP.
+    /*
+      Retorna un ícono según el tipo para los JSP.
      */
     public String getIcono() {
         return switch (tipo) {
@@ -44,7 +44,7 @@ public class Notificacion {
         };
     }
 
-    // ── Getters y Setters ──────────────────────────────────────────
+    // Getters y Setters
 
     public Long getIdNotificacion()             { return idNotificacion; }
     public void setIdNotificacion(Long id)      { this.idNotificacion = id; }

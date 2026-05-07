@@ -8,15 +8,14 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * DAO para ingrediente, movimiento_inventario,
- * compra_anticipada, detalle_compra y alerta_inventario.
+/*
+ DAO para ingrediente, movimiento_inventario,
+  compra_anticipada, detalle_compra y alerta_inventario.
  */
 public class InventarioDAO {
 
-    // ══════════════════════════════════════════════════════════
+
     //  INGREDIENTE
-    // ══════════════════════════════════════════════════════════
 
     public Long insertarIngrediente(Ingrediente i) throws SQLException {
         String sql = """
@@ -82,8 +81,8 @@ public class InventarioDAO {
         return lista;
     }
 
-    /**
-     * Lista ingredientes con stock bajo usando la vista de inventario.
+    /*
+      Lista ingredientes con stock bajo usando la vista de inventario.
      */
     public List<Ingrediente> listarConStockBajo() throws SQLException {
         String sql = """
@@ -128,14 +127,12 @@ public class InventarioDAO {
         }
     }
 
-    // ══════════════════════════════════════════════════════════
     //  MOVIMIENTO INVENTARIO
-    // ══════════════════════════════════════════════════════════
 
-    /**
-     * Registra un movimiento de stock.
-     * El trigger en BD actualiza automáticamente stock_actual del ingrediente
-     * y genera alerta si el stock queda bajo.
+    /*
+      Registra un movimiento de stock.
+      El trigger en BD actualiza automáticamente stock_actual del ingrediente
+      y genera alerta si el stock queda bajo.
      */
     public Long registrarMovimiento(MovimientoInventario m) throws SQLException {
         String sql = """
@@ -181,12 +178,10 @@ public class InventarioDAO {
         return lista;
     }
 
-    // ══════════════════════════════════════════════════════════
     //  COMPRA ANTICIPADA
-    // ══════════════════════════════════════════════════════════
 
-    /**
-     * Crea una compra con sus detalles en una sola transacción.
+    /*
+      Crea una compra con sus detalles en una sola transacción.
      */
     public Long crearCompra(CompraAnticipada compra) throws SQLException {
         try (Connection con = DBConnection.getConnection()) {
@@ -298,9 +293,9 @@ public class InventarioDAO {
         }
     }
 
-    /**
-     * Recepciona la compra: genera movimientos de ENTRADA en inventario.
-     * Llama a la función recepcionar_compra() de PostgreSQL.
+    /*
+      Recepciona la compra: genera movimientos de ENTRADA en inventario.
+      Llama a la función recepcionar_compra() de PostgreSQL.
      */
     public void recepcionarCompra(Long idCompra, Long idUsuario)
             throws SQLException {
@@ -366,10 +361,7 @@ public class InventarioDAO {
         return lista;
     }
 
-    // ══════════════════════════════════════════════════════════
     //  ALERTAS
-    // ══════════════════════════════════════════════════════════
-
     public List<AlertaInventario> listarAlertasActivas() throws SQLException {
         String sql = """
             SELECT a.id_alerta, a.id_ingrediente, a.id_admin,
@@ -416,9 +408,7 @@ public class InventarioDAO {
         }
     }
 
-    // ══════════════════════════════════════════════════════════
     //  HELPERS
-    // ══════════════════════════════════════════════════════════
 
     private Ingrediente mapearIngrediente(ResultSet rs) throws SQLException {
         Ingrediente i = new Ingrediente();

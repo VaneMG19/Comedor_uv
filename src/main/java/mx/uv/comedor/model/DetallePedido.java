@@ -2,9 +2,9 @@ package mx.uv.comedor.model;
 
 import java.math.BigDecimal;
 
-/**
- * Un renglón dentro de un pedido.
- * cubiertoPorBeca=true → precio $0 (solo platillos tipo=MENU para becados)
+/*
+  Un renglón dentro de un pedido.
+  cubiertoPorBeca=true precio $0 (solo platillos tipo=MENU para becados)
  */
 public class DetallePedido {
 

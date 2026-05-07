@@ -2,10 +2,10 @@ package mx.uv.comedor.model;
 
 import java.math.BigDecimal;
 
-/**
- * POJO que representa la tabla 'ingrediente'.
- * El stock se actualiza automáticamente via trigger en BD
- * cada vez que se inserta un movimiento_inventario.
+/*
+  POJO que representa la tabla 'ingrediente'.
+  El stock se actualiza automáticamente via trigger en BD
+  cada vez que se inserta un movimiento_inventario.
  */
 public class Ingrediente {
 
@@ -33,12 +33,12 @@ public class Ingrediente {
         this.activo         = true;
     }
 
-    // ── Métodos de negocio ─────────────────────────────────────────
+    // Métodos de negocio
 
-    /**
-     * Verifica si el stock está por debajo del mínimo.
-     * El trigger en BD genera la alerta automáticamente,
-     * pero este método sirve para validaciones en Java.
+    /*
+      Verifica si el stock está por debajo del mínimo.
+      El trigger en BD genera la alerta automáticamente,
+      pero este método sirve para validaciones en Java.
      */
     public boolean verificarStockBajo() {
         return stockActual.compareTo(stockMinimo) < 0;
@@ -48,9 +48,9 @@ public class Ingrediente {
         return stockActual.compareTo(BigDecimal.ZERO) == 0;
     }
 
-    /**
-     * Calcula el porcentaje de stock respecto al máximo.
-     * Retorna -1 si no hay stock máximo definido.
+    /*
+      Calcula el porcentaje de stock respecto al máximo.
+      Retorna -1 si no hay stock máximo definido.
      */
     public double getPorcentajeStock() {
         if (stockMaximo == null || stockMaximo.compareTo(BigDecimal.ZERO) == 0)
@@ -60,8 +60,8 @@ public class Ingrediente {
                           .doubleValue();
     }
 
-    /**
-     * Retorna una etiqueta de estado para mostrar en la vista.
+    /*
+      Retorna una etiqueta de estado para mostrar en la vista.
      */
     public String getEstadoStock() {
         if (estaAgotado())        return "AGOTADO";
@@ -71,7 +71,7 @@ public class Ingrediente {
         return "NORMAL";
     }
 
-    // ── Getters y Setters ──────────────────────────────────────────
+    // Getters y Setters
 
     public Long getIdIngrediente()           { return idIngrediente; }
     public void setIdIngrediente(Long id)    { this.idIngrediente = id; }

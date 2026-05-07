@@ -2,10 +2,10 @@ package mx.uv.comedor.model;
 
 import java.time.LocalDate;
 
-/**
- * POJO que representa la tabla 'alumno_becado'.
- * La beca SOLO cubre platillos del menú del día (tipo = MENU).
- * Los platillos a la carta siempre se pagan con efectivo o tarjeta.
+/*
+  POJO que representa la tabla 'alumno_becado'.
+  La beca SOLO cubre platillos del menú del día (tipo = MENU).
+  Los platillos a la carta siempre se pagan con efectivo o tarjeta.
  */
 public class AlumnoBecado {
 
@@ -32,35 +32,35 @@ public class AlumnoBecado {
         this.vigenciaHasta            = vigenciaHasta;
     }
 
-    // ── Métodos de negocio ─────────────────────────────────────────
+    //  Métodos de negocio
 
-    /**
-     * Verifica si la beca está vigente a la fecha de hoy.
+    /*
+      Verifica si la beca está vigente a la fecha de hoy.
      */
     public boolean esBecaVigente() {
         LocalDate hoy = LocalDate.now();
         return !hoy.isBefore(vigenciaDesde) && !hoy.isAfter(vigenciaHasta);
     }
 
-    /**
-     * Verifica si aún tiene comidas disponibles esta semana.
+    /*
+      Verifica si aún tiene comidas disponibles esta semana.
      */
     public boolean puedeUsarBeca() {
         return esBecaVigente() &&
                comidasUsadasSemana < comidasDisponiblesSemana;
     }
 
-    /**
-     * Valida que la beca aplica (siempre retorna true porque
-     * la lógica de qué tipo de platillo cubre se valida en el DAO).
+    /*
+      Valida que la beca aplica (siempre retorna true porque
+      la lógica de qué tipo de platillo cubre se valida en el DAO).
      */
     public boolean validarBeca() {
         return puedeUsarBeca();
     }
 
-    /**
-     * Registra el uso de una comida de beca.
-     * Llama al DAO para persistir el cambio.
+    /*
+      Registra el uso de una comida de beca.
+      Llama al DAO para persistir el cambio.
      */
     public void registrarUso() {
         if (!puedeUsarBeca()) {
@@ -70,14 +70,14 @@ public class AlumnoBecado {
         this.comidasUsadasSemana++;
     }
 
-    /**
-     * Calcula cuántas comidas le quedan esta semana.
+    /*
+      Calcula cuántas comidas le quedan esta semana.
      */
     public int getComidasRestantesSemana() {
         return comidasDisponiblesSemana - comidasUsadasSemana;
     }
 
-    // ── Getters y Setters ──────────────────────────────────────────
+    // Getters y Setters
 
     public Long getIdBecado() { return idBecado; }
     public void setIdBecado(Long idBecado) { this.idBecado = idBecado; }

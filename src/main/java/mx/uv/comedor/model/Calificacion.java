@@ -2,10 +2,10 @@ package mx.uv.comedor.model;
 
 import java.time.LocalDateTime;
 
-/**
- * Una calificación de 1-5 estrellas dejada por un usuario
- * después de recibir un pedido ENTREGADO.
- * Un pedido solo puede tener una calificación (UNIQUE id_pedido).
+/*
+  Una calificación de 1-5 estrellas dejada por un usuario
+ después de recibir un pedido ENTREGADO.
+  Un pedido solo puede tener una calificación (UNIQUE id_pedido).
  */
 public class Calificacion {
 
@@ -36,7 +36,7 @@ public class Calificacion {
         this.fecha       = LocalDateTime.now();
     }
 
-    // ── Métodos de negocio ─────────────────────────────────────────
+    // Métodos de negocio
 
     public void aprobar()  { this.aprobada = true; }
     public void rechazar() { this.aprobada = false; }
@@ -45,15 +45,15 @@ public class Calificacion {
         return respuesta != null;
     }
 
-    /**
-     * Retorna estrellas como texto para los JSP.
-     * Ej: puntuacion=4 → "★★★★☆"
+    /*
+      Retorna estrellas como texto para los JSP.
+      Ej: puntuacion=4 → "★★★★☆"
      */
     public String getEstrellas() {
         return "★".repeat(puntuacion) + "☆".repeat(5 - puntuacion);
     }
 
-    // ── Getters y Setters ──────────────────────────────────────────
+    // Getters y Setters
 
     public Long getIdCalificacion()           { return idCalificacion; }
     public void setIdCalificacion(Long id)    { this.idCalificacion = id; }

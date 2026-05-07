@@ -1,7 +1,7 @@
 package mx.uv.comedor.model;
 
-/**
- * POJO que representa la tabla 'empleado_cocina'.
+/*
+  POJO que representa la tabla 'empleado_cocina'.
  */
 public class EmpleadoCocina {
 
@@ -23,7 +23,7 @@ public class EmpleadoCocina {
         this.puesto      = puesto;
     }
 
-    // ── Métodos de negocio ─────────────────────────────────────────
+    // Métodos de negocio
 
     public boolean esTurnoManana() {
         return turno == TurnoEnum.MANANA;
@@ -37,7 +37,7 @@ public class EmpleadoCocina {
         // Implementado en PedidoServlet
     }
 
-    // ── Getters y Setters ──────────────────────────────────────────
+    // Getters y Setters
 
     public Long getIdEmpleado() { return idEmpleado; }
     public void setIdEmpleado(Long idEmpleado) { this.idEmpleado = idEmpleado; }

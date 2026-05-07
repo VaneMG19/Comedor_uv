@@ -2,9 +2,9 @@ package mx.uv.comedor.model;
 
 import java.time.LocalDateTime;
 
-/**
- * POJO que representa la tabla 'usuario'.
- * Clase base para todos los roles del sistema.
+/*
+  POJO que representa la tabla 'usuario'.
+  Clase base para todos los roles del sistema.
  */
 public class Usuario {
 
@@ -19,8 +19,7 @@ public class Usuario {
     private LocalDateTime fechaRegistro;
     private RolEnum       rol;
 
-    // ── Constructores ─────────────────────────────────────────────
-
+    // Constructores
     public Usuario() {}
 
     public Usuario(String nombre, String apellidos, String email,
@@ -33,30 +32,30 @@ public class Usuario {
         this.activo       = true;
     }
 
-    // ── Métodos de negocio ────────────────────────────────────────
+    // Métodos de negocio
 
-    /**
-     * Retorna el nombre completo del usuario.
+    /*
+      Retorna el nombre completo del usuario.
      */
     public String getNombreCompleto() {
         return nombre + " " + apellidos;
     }
 
-    /**
-     * Verifica si el usuario tiene un rol específico.
+    /*
+      Verifica si el usuario tiene un rol específico.
      */
     public boolean tieneRol(RolEnum rolRequerido) {
         return this.rol == rolRequerido;
     }
 
-    /**
-     * Verifica si la cuenta está activa.
+    /*
+      Verifica si la cuenta está activa.
      */
     public boolean estaActivo() {
         return activo;
     }
 
-    // ── Getters y Setters ─────────────────────────────────────────
+    // Getters y Setters
 
     public Long getIdUsuario() { return idUsuario; }
     public void setIdUsuario(Long idUsuario) { this.idUsuario = idUsuario; }

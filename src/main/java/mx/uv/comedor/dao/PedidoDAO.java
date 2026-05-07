@@ -9,25 +9,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-/**
- * DAO para pedido, detalle_pedido y programacion_pedido.
- * El método crearPedidoCompleto() usa transacción para garantizar
- * que pedido + detalles + programación + pago se insertan juntos.
+/*
+  DAO para pedido, detalle_pedido y programacion_pedido.
+  El método crearPedidoCompleto() usa transacción para garantizar
+  que pedido + detalles + programación + pago se insertan juntos.
  */
 public class PedidoDAO {
 
     private final PlatilloDAO     platilloDAO = new PlatilloDAO();
     private final AlumnoBecadoDAO becadoDAO   = new AlumnoBecadoDAO();
 
-    // ── CREATE — transacción completa ─────────────────────────────
+    // CREATE — transacción completa
 
-    /**
-     * Crea el pedido completo en una sola transacción:
-     * 1. Inserta pedido con folio generado por BD
-     * 2. Inserta cada detalle aplicando beca si corresponde
-     * 3. Si es ANTICIPADO, inserta programacion_pedido
-     * 4. Inserta el pago
-     * Hace rollback automático si algo falla.
+    /*
+      Crea el pedido completo en una sola transacción:
+      1. Inserta pedido con folio generado por BD
+      2. Inserta cada detalle aplicando beca si corresponde
+      3. Si es ANTICIPADO, inserta programacion_pedido
+      4. Inserta el pago
+      Hace rollback automático si algo falla.
      */
     public Pedido crearPedidoCompleto(Pedido pedido, MetodoPagoEnum metodoPago,
                                        AlumnoBecado becado)
@@ -72,7 +72,7 @@ public class PedidoDAO {
         }
     }
 
-    // ── READ ──────────────────────────────────────────────────────
+    // READ
 
     public Pedido buscarPorId(Long idPedido) throws SQLException {
         String sql = """
@@ -119,9 +119,9 @@ public class PedidoDAO {
         }
     }
 
-    /**
-     * Lista los pedidos activos para el empleado de cocina
-     * usando la vista que ya ordena: anticipados primero.
+    /*
+      Lista los pedidos activos para el empleado de cocina
+      usando la vista que ya ordena: anticipados primero.
      */
     public List<Pedido> listarActivos() throws SQLException {
         String sql = """
@@ -171,11 +171,11 @@ public class PedidoDAO {
         return lista;
     }
 
-    // ── UPDATE: cambio de estado ───────────────────────────────────
+    // UPDATE: cambio de estado
 
-    /**
-     * Cambia el estado del pedido y registra el cambio en estado_pedido_log.
-     * Solo el empleado de cocina puede cambiar el estado.
+    /*
+      Cambia el estado del pedido y registra el cambio en estado_pedido_log.
+      Solo el empleado de cocina puede cambiar el estado.
      */
     public boolean cambiarEstado(Long idPedido, EstadoPedidoEnum nuevoEstado,
                                   Long idEmpleado, String comentario)
@@ -253,7 +253,7 @@ public class PedidoDAO {
         }
     }
 
-    // ── Métodos privados de inserción ─────────────────────────────
+    // Métodos privados de inserción
 
     private Long insertarPedido(Connection con, Pedido p) throws SQLException {
         String sql = """
@@ -348,11 +348,11 @@ public class PedidoDAO {
         throw new SQLException("No se obtuvo ID al insertar pago");
     }
 
-    // ── Helpers de negocio ────────────────────────────────────────
+    // Helpers de negocio
 
-    /**
-     * Aplica la beca a los detalles del pedido si el usuario es becado.
-     * Solo aplica a renglones con platillo tipo=MENU.
+    /*
+      Aplica la beca a los detalles del pedido si el usuario es becado.
+      Solo aplica a renglones con platillo tipo=MENU.
      */
     private void aplicarBecaADetalles(Pedido pedido, AlumnoBecado becado)
             throws SQLException {
@@ -368,8 +368,8 @@ public class PedidoDAO {
         }
     }
 
-    /**
-     * Construye el objeto Pago con los montos correctos según el método.
+    /*
+     Construye el objeto Pago con los montos correctos según el método.
      */
     private Pago construirPago(Pedido pedido, MetodoPagoEnum metodo,
                                 AlumnoBecado becado) {

@@ -1,8 +1,8 @@
 package mx.uv.comedor.model;
 
-/**
- * POJO que representa la tabla 'estudiante'.
- * Extiende los datos de Usuario cuando rol = ESTUDIANTE o BECADO.
+/*
+  POJO que representa la tabla 'estudiante'.
+  Extiende los datos de Usuario cuando rol = ESTUDIANTE o BECADO.
  */
 public class Estudiante {
 
@@ -15,7 +15,7 @@ public class Estudiante {
     // Referencia al objeto Usuario completo (cargado por DAO con JOIN)
     private Usuario usuario;
 
-    // ── Constructores ─────────────────────────────────────────────
+    // Constructores
 
     public Estudiante() {}
 
@@ -27,31 +27,31 @@ public class Estudiante {
         this.semestre  = semestre;
     }
 
-    // ── Métodos de negocio ────────────────────────────────────────
+    //Métodos de negocio
 
-    /**
-     * Retorna el nombre completo si el usuario fue cargado.
+    /*
+      Retorna el nombre completo si el usuario fue cargado.
      */
     public String getNombreCompleto() {
         return usuario != null ? usuario.getNombreCompleto() : "Sin datos";
     }
 
-    /**
-     * Indica si este estudiante tiene beca activa.
-     * El DAO de AlumnoBecado lo determina al consultar.
+    /*
+      Indica si este estudiante tiene beca activa.
+      El DAO de AlumnoBecado lo determina al consultar.
      */
     public boolean esBecado() {
         return usuario != null && usuario.getRol() == RolEnum.BECADO;
     }
 
-    /**
-     * Realiza un pedido — la lógica se delega al servlet.
+    /*
+      Realiza un pedido — la lógica se delega al servlet.
      */
     public void realizarPedido() {
         // Implementado en PedidoServlet
     }
 
-    // ── Getters y Setters ─────────────────────────────────────────
+    // Getters y Setters
 
     public Long getIdEstudiante() { return idEstudiante; }
     public void setIdEstudiante(Long idEstudiante) { this.idEstudiante = idEstudiante; }

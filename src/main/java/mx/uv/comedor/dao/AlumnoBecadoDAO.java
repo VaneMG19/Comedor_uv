@@ -5,8 +5,8 @@ import mx.uv.comedor.util.DBConnection;
 
 import java.sql.*;
 
-/**
- * DAO para la tabla 'alumno_becado'.
+/*
+  DAO para la tabla 'alumno_becado'.
  */
 public class AlumnoBecadoDAO {
 
@@ -84,9 +84,9 @@ public class AlumnoBecadoDAO {
 
     // ── UPDATE
 
-    /**
-     * Incrementa las comidas usadas esta semana en 1.
-     * Se llama cada vez que el becado usa su beca.
+    /*
+     Incrementa las comidas usadas esta semana en 1.
+      Se llama cada vez que el becado usa su beca.
      */
     public boolean registrarUsoComida(Long idBecado) throws SQLException {
         String sql = """
@@ -108,9 +108,9 @@ public class AlumnoBecadoDAO {
         }
     }
 
-    /**
-     * Verifica si el becado puede usar su beca hoy.
-     * La beca SOLO aplica para platillos tipo MENU.
+    /*
+      Verifica si el becado puede usar su beca hoy.
+      La beca SOLO aplica para platillos tipo MENU.
      */
     public boolean puedeUsarBeca(Long idBecado) throws SQLException {
         String sql = """
@@ -129,9 +129,8 @@ public class AlumnoBecadoDAO {
         }
     }
 
-    /**
-     * Resetea el contador de comidas usadas (llamar cada lunes).
-     * También disponible como función en PostgreSQL: resetear_comidas_semana()
+    /*
+      Resetea el contador de comidas usadas (llamar cada lunes).
      */
     public void resetearComidassemana() throws SQLException {
         String sql = "SELECT resetear_comidas_semana()";

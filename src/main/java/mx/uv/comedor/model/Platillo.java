@@ -2,10 +2,10 @@ package mx.uv.comedor.model;
 
 import java.math.BigDecimal;
 
-/**
- * POJO que representa la tabla 'platillo'.
- * tipo=MENU  → aparece en el menú del día, puede ser cubierto por beca
- * tipo=CARTA → siempre disponible, NUNCA cubierto por beca
+/*
+  POJO que representa la tabla 'platillo'.
+  tipo=MENU  → aparece en el menú del día, puede ser cubierto por beca
+  tipo=CARTA → siempre disponible, NUNCA cubierto por beca
  */
 public class Platillo {
 
@@ -31,12 +31,12 @@ public class Platillo {
         this.tiempoPrep = 15;
     }
 
-    // ── Métodos de negocio ─────────────────────────────────────────
+    // Métodos de negocio
 
-    /**
-     * Calcula el precio que paga el usuario según su rol.
-     * Becado + tipo=MENU → $0.00 (gratis)
-     * Cualquier usuario + tipo=CARTA → precio normal
+    /*
+      Calcula el precio que paga el usuario según su rol.
+      Becado + tipo=MENU → $0.00 (gratis)
+      Cualquier usuario + tipo=CARTA → precio normal
      */
     public BigDecimal calcularPrecioFinal(RolEnum rol) {
         if (rol == RolEnum.BECADO && tipo == TipoPlatEnum.MENU) {
@@ -52,7 +52,7 @@ public class Platillo {
         this.disponible = !this.disponible;
     }
 
-    // ── Getters y Setters ──────────────────────────────────────────
+    // Getters y Setters
 
     public Long getIdPlatillo()              { return idPlatillo; }
     public void setIdPlatillo(Long id)       { this.idPlatillo = id; }

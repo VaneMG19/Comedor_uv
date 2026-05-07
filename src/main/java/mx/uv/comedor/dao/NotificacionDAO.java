@@ -9,16 +9,16 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * DAO para la tabla 'notificacion'.
- * Las notificaciones se crean automáticamente desde triggers de BD.
- * Java solo las consulta y las marca como leídas.
+/*
+  DAO para la tabla 'notificacion'.
+  Las notificaciones se crean automáticamente desde triggers de BD.
+  Java solo las consulta y las marca como leídas.
  */
 public class NotificacionDAO {
 
-    /**
-     * Retorna las notificaciones NO leídas de un usuario.
-     * Se llama desde el servlet de polling cada 10-15 segundos.
+    /*
+      Retorna las notificaciones NO leídas de un usuario.
+      Se llama desde el servlet de polling cada 10-15 segundos.
      */
     public List<Notificacion> listarNoLeidas(Long idUsuario) throws SQLException {
         String sql = """
@@ -40,9 +40,9 @@ public class NotificacionDAO {
         return lista;
     }
 
-    /**
-     * Retorna el número de notificaciones no leídas.
-     * Para mostrar el badge en el ícono de la campana.
+    /*
+      Retorna el número de notificaciones no leídas.
+      Para mostrar el badge en el ícono de la campana.
      */
     public int contarNoLeidas(Long idUsuario) throws SQLException {
         String sql = """
@@ -78,8 +78,8 @@ public class NotificacionDAO {
         return lista;
     }
 
-    /**
-     * Marca una notificación específica como leída.
+    /*
+      Marca una notificación específica como leída.
      */
     public boolean marcarLeida(Long idNotificacion) throws SQLException {
         String sql = """
@@ -94,8 +94,8 @@ public class NotificacionDAO {
         }
     }
 
-    /**
-     * Marca TODAS las notificaciones del usuario como leídas.
+    /*
+      Marca TODAS las notificaciones del usuario como leídas.
      */
     public int marcarTodasLeidas(Long idUsuario) throws SQLException {
         String sql = """
@@ -110,7 +110,7 @@ public class NotificacionDAO {
         }
     }
 
-    // ── HELPER ────────────────────────────────────────────────────
+    // HELPER
 
     private Notificacion mapear(ResultSet rs) throws SQLException {
         Notificacion n = new Notificacion();

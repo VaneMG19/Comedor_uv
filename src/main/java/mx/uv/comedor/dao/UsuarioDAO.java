@@ -11,15 +11,15 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * DAO para la tabla 'usuario'.
+/*
+  DAO para la tabla 'usuario'.
  */
 public class UsuarioDAO {
 
 
-    /**
-     * Inserta un nuevo usuario en la BD y retorna el ID generado.
-     * El password se hashea con la función hashear_password() de PostgreSQL.
+    /*
+      Inserta un nuevo usuario en la BD y retorna el ID generado.
+      El password se hashea con la función hashear_password() de PostgreSQL.
      */
     public Long insertar(Usuario u, String passwordPlano) throws SQLException {
         String sql = """
@@ -51,8 +51,8 @@ public class UsuarioDAO {
 
 
 
-    /**
-     * Busca un usuario por su ID.
+    /*
+      Busca un usuario por su ID.
      */
     public Usuario buscarPorId(Long idUsuario) throws SQLException {
         String sql = """
@@ -75,8 +75,8 @@ public class UsuarioDAO {
         }
     }
 
-    /**
-     * Busca un usuario por email — usado en login.
+    /*
+      Busca un usuario por email — usado en login.
      */
     public Usuario buscarPorEmail(String email) throws SQLException {
         String sql = """
@@ -99,8 +99,8 @@ public class UsuarioDAO {
         }
     }
 
-    /**
-     * Retorna todos los usuarios activos.
+    /*
+      Retorna todos los usuarios activos.
      */
     public List<Usuario> listarTodos() throws SQLException {
         String sql = """
@@ -124,8 +124,8 @@ public class UsuarioDAO {
         return lista;
     }
 
-    /**
-     * Lista usuarios por rol.
+    /*
+      Lista usuarios por rol.
      */
     public List<Usuario> listarPorRol(RolEnum rol) throws SQLException {
         String sql = """
@@ -153,9 +153,9 @@ public class UsuarioDAO {
 
 
 
-    /**
-     * Verifica email y contraseña usando la función de PostgreSQL.
-     * Retorna el usuario si las credenciales son correctas, null si no.
+    /*
+      Verifica email y contraseña usando la función de PostgreSQL.
+      Retorna el usuario si las credenciales son correctas, null si no.
      */
     public Usuario login(String email, String passwordPlano) throws SQLException {
         String sql = """
@@ -183,8 +183,8 @@ public class UsuarioDAO {
 
 
 
-    /**
-     * Actualiza datos básicos del perfil (sin cambiar password ni rol).
+    /*
+      Actualiza datos básicos del perfil (sin cambiar password ni rol).
      */
     public boolean actualizarPerfil(Usuario u) throws SQLException {
         String sql = """
@@ -206,8 +206,8 @@ public class UsuarioDAO {
         }
     }
 
-    /**
-     * Cambia la contraseña del usuario.
+    /*
+      Cambia la contraseña del usuario.
      */
     public boolean cambiarPassword(Long idUsuario, String nuevaPassword) throws SQLException {
         String sql = """
@@ -227,8 +227,8 @@ public class UsuarioDAO {
     }
 
 
-    /**
-     * Desactiva un usuario — nunca se elimina físicamente.
+    /*
+      Desactiva un usuario — nunca se elimina físicamente.
      */
     public boolean desactivar(Long idUsuario) throws SQLException {
         String sql = "UPDATE usuario SET activo = FALSE WHERE id_usuario = ?";
@@ -243,9 +243,9 @@ public class UsuarioDAO {
 
 
 
-    /**
-     * Mapea un ResultSet a un objeto Usuario.
-     * Se reutiliza en todos los métodos de consulta.
+    /*
+      Mapea un ResultSet a un objeto Usuario.
+      Se reutiliza en todos los métodos de consulta.
      */
     private Usuario mapear(ResultSet rs) throws SQLException {
         Usuario u = new Usuario();

@@ -2,9 +2,9 @@ package mx.uv.comedor.model;
 
 import java.math.BigDecimal;
 
-/**
- * Un renglón de la CompraAnticipada.
- * El subtotal es calculado en BD: cantidad_solicitada * precio_unitario.
+/*
+  Un renglón de la CompraAnticipada.
+  El subtotal es calculado en BD: cantidad_solicitada * precio_unitario.
  */
 public class DetalleCompra {
 
@@ -28,8 +28,8 @@ public class DetalleCompra {
         this.cantidadRecibida   = BigDecimal.ZERO;
     }
 
-    /**
-     * Calcula subtotal en Java — coincide con la columna GENERATED en BD.
+    /*
+      Calcula subtotal en Java — coincide con la columna GENERATED en BD.
      */
     public BigDecimal getSubtotal() {
         if (subtotal != null) return subtotal;
@@ -38,7 +38,7 @@ public class DetalleCompra {
         return BigDecimal.ZERO;
     }
 
-    // ── Getters y Setters ──────────────────────────────────────────
+    // Getters y Setters
 
     public Long getIdDetalleCompra()             { return idDetalleCompra; }
     public void setIdDetalleCompra(Long id)      { this.idDetalleCompra = id; }

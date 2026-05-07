@@ -3,9 +3,9 @@ package mx.uv.comedor.model;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-/**
- * POJO que representa la tabla 'solicitud_beca'.
- * El becado registra con anticipación qué días quiere comer.
+/*
+  POJO que representa la tabla 'solicitud_beca'.
+  El becado registra con anticipación qué días quiere comer.
  */
 public class SolicitudBeca {
 
@@ -33,10 +33,10 @@ public class SolicitudBeca {
         this.fechaSolicitud = LocalDateTime.now();
     }
 
-    // ── Métodos de negocio ─────────────────────────────────────────
+    // Métodos de negocio
 
-    /**
-     * Verifica si la solicitud aún puede modificarse.
+    /*
+      Verifica si la solicitud aún puede modificarse.
      */
     public boolean estaVigente() {
         return LocalDate.now().isBefore(fechaLimite) &&
@@ -57,23 +57,23 @@ public class SolicitudBeca {
         this.estado = EstSolicitudEnum.CANCELADA;
     }
 
-    /**
-     * Indica si esta solicitud es solo para desayuno.
+    /*
+      Indica si esta solicitud es solo para desayuno.
      */
     public boolean incluyeDesayuno() {
         return tipoComida == TipoComidaEnum.DESAYUNO ||
                tipoComida == TipoComidaEnum.AMBOS;
     }
 
-    /**
-     * Indica si esta solicitud incluye comida del mediodía.
+    /*
+      Indica si esta solicitud incluye comida del mediodía.
      */
     public boolean incluyeComida() {
         return tipoComida == TipoComidaEnum.COMIDA ||
                tipoComida == TipoComidaEnum.AMBOS;
     }
 
-    // ── Getters y Setters ──────────────────────────────────────────
+    // Getters y Setters
 
     public Long getIdSolicitud() { return idSolicitud; }
     public void setIdSolicitud(Long idSolicitud) { this.idSolicitud = idSolicitud; }

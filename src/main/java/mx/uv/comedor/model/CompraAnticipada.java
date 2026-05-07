@@ -6,9 +6,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Orden de compra programada por el administrador.
- * Al recepcionarse, genera movimientos de ENTRADA en inventario.
+/*
+  Orden de compra programada por el administrador.
+  Al recepcionarse, genera movimientos de ENTRADA en inventario.
  */
 public class CompraAnticipada {
 
@@ -34,7 +34,7 @@ public class CompraAnticipada {
         this.fechaEmision          = LocalDateTime.now();
     }
 
-    // ── Métodos de negocio ─────────────────────────────────────────
+    // Métodos de negocio
 
     public void programar() {
         this.estado = EstCompraEnum.PROGRAMADA;
@@ -52,8 +52,8 @@ public class CompraAnticipada {
         this.estado = EstCompraEnum.CANCELADA;
     }
 
-    /**
-     * Recalcula el total estimado sumando los subtotales de los detalles.
+    /*
+      Recalcula el total estimado sumando los subtotales de los detalles.
      */
     public BigDecimal calcularTotal() {
         this.totalEstimado = detalles.stream()
@@ -62,7 +62,7 @@ public class CompraAnticipada {
         return this.totalEstimado;
     }
 
-    // ── Getters y Setters ──────────────────────────────────────────
+    // Getters y Setters
 
     public Long getIdCompra()                      { return idCompra; }
     public void setIdCompra(Long id)               { this.idCompra = id; }

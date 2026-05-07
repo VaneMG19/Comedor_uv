@@ -10,12 +10,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * DAO para la tabla 'platillo' e 'informacion_nutricional'.
+/*
+  DAO para la tabla 'platillo' e 'informacion_nutricional'.
  */
 public class PlatilloDAO {
 
-    // ── CREATE ────────────────────────────────────────────────────
+    // CREATE
 
     public Long insertar(Platillo p) throws SQLException {
         String sql = "INSERT INTO platillo " +
@@ -69,7 +69,7 @@ public class PlatilloDAO {
         }
     }
 
-    // ── READ ──────────────────────────────────────────────────────
+    // READ
 
     public Platillo buscarPorId(Long idPlatillo) throws SQLException {
         String sql = "SELECT p.*, " +
@@ -161,7 +161,7 @@ public class PlatilloDAO {
         return lista;
     }
 
-    // ── UPDATE ────────────────────────────────────────────────────
+    // UPDATE
 
     public boolean actualizar(Platillo p) throws SQLException {
         String sql = "UPDATE platillo " +
@@ -195,7 +195,7 @@ public class PlatilloDAO {
         }
     }
 
-    // ── HELPER ────────────────────────────────────────────────────
+    // HELPER
 
     private Platillo mapear(ResultSet rs) throws SQLException {
         Platillo p = new Platillo();
