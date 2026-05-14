@@ -1,5 +1,2 @@
-<html>
-<body>
-<h2>Ya muestra algo!</h2>
-</body>
-</html>
+<%@ page contentType="text/html;charset=UTF-8" %>
+<% response.sendRedirect(request.getContextPath() + "/login"); %>

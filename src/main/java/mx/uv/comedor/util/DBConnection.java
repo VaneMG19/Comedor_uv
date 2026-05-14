@@ -5,10 +5,10 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-/**
- * Conexión a PostgreSQL.
- * Las credenciales se leen del archivo .env en la raíz del proyecto.
- * El .env NUNCA se sube a GitHub — está en el .gitignore.
+/*
+  Conexión a PostgreSQL.
+  Las credenciales se leen del archivo .env en la raíz del proyecto.
+
  */
 public class DBConnection {
 
@@ -37,11 +37,7 @@ public class DBConnection {
         return DriverManager.getConnection(URL, USER, PASSWORD);
     }
 
-    /**
-     * Obtiene el valor de una variable de entorno.
-     * Primero busca en el .env, luego en las variables del sistema.
-     * Si no encuentra ninguna, usa el valor por defecto.
-     */
+
     private static String getEnv(String key, String defaultValue) {
         // Intentar desde .env
         String value = dotenv.get(key, null);
