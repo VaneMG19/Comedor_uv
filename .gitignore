@@ -36,3 +36,16 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+# Variables de entorno — NUNCA subir al repositorio
+.env
+
+# IntelliJ
+.idea/
+*.iml
+
+# Maven
+target/
+
+# Logs
+*.log
