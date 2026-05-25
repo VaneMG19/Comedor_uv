@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /*
-  POJO que representa la tabla 'solicitud_beca'.
+   representa la tabla 'solicitud_beca'.
   El becado registra con anticipación qué días quiere comer.
  */
 public class SolicitudBeca {

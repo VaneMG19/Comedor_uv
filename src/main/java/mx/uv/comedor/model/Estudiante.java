@@ -1,7 +1,7 @@
 package mx.uv.comedor.model;
 
 /*
-  POJO que representa la tabla 'estudiante'.
+   representa la tabla 'estudiante'.
   Extiende los datos de Usuario cuando rol = ESTUDIANTE o BECADO.
  */
 public class Estudiante {

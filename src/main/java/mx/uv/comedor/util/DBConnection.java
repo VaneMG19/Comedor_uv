@@ -7,17 +7,18 @@ import java.sql.SQLException;
 
 /*
   Conexión a PostgreSQL.
-  Las credenciales se leen del archivo .env en la raíz del proyecto.
-
+  Lee las credenciales del archivo .env en la raíz del proyecto.
  */
 public class DBConnection {
 
+    // Una sola declaración de dotenv con la ruta exacta del proyecto
     private static final Dotenv dotenv = Dotenv.configure()
-            .ignoreIfMissing()  // no falla si no existe el .env (ej. en producción)
+            .directory("C:/Users/vmg19/IdeaProjects/comedor_universitario")
+            .ignoreIfMissing()
             .load();
 
     private static final String HOST     = getEnv("DB_HOST",     "localhost");
-    private static final String PORT     = getEnv("DB_PORT",     "5432");
+    private static final String PORT     = getEnv("DB_PORT",     "5433");
     private static final String DATABASE = getEnv("DB_NAME",     "comedor_uv");
     private static final String USER     = getEnv("DB_USER",     "postgres");
     private static final String PASSWORD = getEnv("DB_PASSWORD", "");
@@ -37,16 +38,11 @@ public class DBConnection {
         return DriverManager.getConnection(URL, USER, PASSWORD);
     }
 
-
     private static String getEnv(String key, String defaultValue) {
-        // Intentar desde .env
         String value = dotenv.get(key, null);
         if (value != null && !value.isBlank()) return value;
-
-        // Intentar desde variables del sistema (útil en servidores)
         value = System.getenv(key);
         if (value != null && !value.isBlank()) return value;
-
         return defaultValue;
     }
 

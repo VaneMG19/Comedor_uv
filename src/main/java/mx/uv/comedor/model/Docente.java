@@ -1,7 +1,6 @@
 package mx.uv.comedor.model;
 
-/*
- POJO que representa la tabla 'docente'.
+/* representa la tabla 'docente'.
   Paga con efectivo o tarjeta — sin saldo UV ni beca.
  */
 public class Docente {

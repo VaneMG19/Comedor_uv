@@ -35,12 +35,12 @@ public class Notificacion {
      */
     public String getIcono() {
         return switch (tipo) {
-            case PEDIDO_LISTO     -> "🍽️";
-            case PEDIDO_CANCELADO -> "❌";
-            case BECA_AGOTADA     -> "🎫";
-            case MENU_NUEVO       -> "📋";
-            case ALERTA_STOCK     -> "⚠️";
-            default               -> "🔔";
+            case PEDIDO_LISTO     -> "";
+            case PEDIDO_CANCELADO -> "";
+            case BECA_AGOTADA     -> "";
+            case MENU_NUEVO       -> "";
+            case ALERTA_STOCK     -> "️";
+            default               -> "";
         };
     }
 

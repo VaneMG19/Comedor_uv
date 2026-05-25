@@ -21,42 +21,29 @@ public class PedidoDAO {
 
     // CREATE — transacción completa
 
-    /*
-      Crea el pedido completo en una sola transacción:
-      1. Inserta pedido con folio generado por BD
-      2. Inserta cada detalle aplicando beca si corresponde
-      3. Si es ANTICIPADO, inserta programacion_pedido
-      4. Inserta el pago
-      Hace rollback automático si algo falla.
-     */
     public Pedido crearPedidoCompleto(Pedido pedido, MetodoPagoEnum metodoPago,
-                                       AlumnoBecado becado)
+                                      AlumnoBecado becado)
             throws SQLException {
 
         try (Connection con = DBConnection.getConnection()) {
             con.setAutoCommit(false);
             try {
-                // 1. Generar folio y calcular totales
                 aplicarBecaADetalles(pedido, becado);
                 pedido.calcularTotal();
 
-                // 2. Insertar pedido
                 Long idPedido = insertarPedido(con, pedido);
                 pedido.setIdPedido(idPedido);
 
-                // 3. Insertar detalles
                 for (DetallePedido d : pedido.getDetalles()) {
                     d.setIdPedido(idPedido);
                     insertarDetalle(con, d);
                 }
 
-                // 4. Si es anticipado, insertar programación
                 if (pedido.esProgramado() && pedido.getProgramacion() != null) {
                     pedido.getProgramacion().setIdPedido(idPedido);
                     insertarProgramacion(con, pedido.getProgramacion());
                 }
 
-                // 5. Insertar pago
                 Pago pago = construirPago(pedido, metodoPago, becado);
                 Long idPago = insertarPago(con, pago);
                 pago.setIdPago(idPago);
@@ -92,6 +79,7 @@ public class PedidoDAO {
                 if (p.esProgramado()) {
                     p.setProgramacion(obtenerProgramacion(p.getIdPedido()));
                 }
+                p.setMetodoPagoDisplay(obtenerMetodoPago(p.getIdPedido()));
                 return p;
             }
             return null;
@@ -119,10 +107,6 @@ public class PedidoDAO {
         }
     }
 
-    /*
-      Lista los pedidos activos para el empleado de cocina
-      usando la vista que ya ordena: anticipados primero.
-     */
     public List<Pedido> listarActivos() throws SQLException {
         String sql = """
             SELECT id_pedido, id_usuario, folio, fecha_creacion,
@@ -171,29 +155,23 @@ public class PedidoDAO {
         return lista;
     }
 
-    // UPDATE: cambio de estado
+    // UPDATE
 
-    /*
-      Cambia el estado del pedido y registra el cambio en estado_pedido_log.
-      Solo el empleado de cocina puede cambiar el estado.
-     */
     public boolean cambiarEstado(Long idPedido, EstadoPedidoEnum nuevoEstado,
-                                  Long idEmpleado, String comentario)
+                                 Long idEmpleado, String comentario)
             throws SQLException {
 
         try (Connection con = DBConnection.getConnection()) {
             con.setAutoCommit(false);
             try {
-                // 1. Obtener estado actual
                 String sqlEstado = "SELECT estado FROM pedido WHERE id_pedido = ?";
                 PreparedStatement psEst = con.prepareStatement(sqlEstado);
                 psEst.setLong(1, idPedido);
                 ResultSet rs = psEst.executeQuery();
                 if (!rs.next()) return false;
                 EstadoPedidoEnum estadoActual =
-                    EstadoPedidoEnum.valueOf(rs.getString("estado"));
+                        EstadoPedidoEnum.valueOf(rs.getString("estado"));
 
-                // 2. Actualizar pedido
                 String sqlUpd = """
                     UPDATE pedido SET estado = CAST(? AS estado_pedido_enum)
                     WHERE id_pedido = ?
@@ -203,7 +181,6 @@ public class PedidoDAO {
                 psUpd.setLong(2, idPedido);
                 psUpd.executeUpdate();
 
-                // 3. Registrar en log
                 String sqlLog = """
                     INSERT INTO estado_pedido_log
                         (id_pedido, id_empleado, estado_anterior, estado_nuevo, comentario)
@@ -218,8 +195,6 @@ public class PedidoDAO {
                 psLog.setString(5, comentario);
                 psLog.executeUpdate();
 
-                // 4. Si el nuevo estado es LISTO y es ANTICIPADO →
-                //    actualizar estado_prog
                 if (nuevoEstado == EstadoPedidoEnum.LISTO) {
                     String sqlProg = """
                         UPDATE programacion_pedido
@@ -350,10 +325,6 @@ public class PedidoDAO {
 
     // Helpers de negocio
 
-    /*
-      Aplica la beca a los detalles del pedido si el usuario es becado.
-      Solo aplica a renglones con platillo tipo=MENU.
-     */
     private void aplicarBecaADetalles(Pedido pedido, AlumnoBecado becado)
             throws SQLException {
 
@@ -368,32 +339,37 @@ public class PedidoDAO {
         }
     }
 
-    /*
-     Construye el objeto Pago con los montos correctos según el método.
-     */
     private Pago construirPago(Pedido pedido, MetodoPagoEnum metodo,
-                                AlumnoBecado becado) {
+                               AlumnoBecado becado) {
         BigDecimal montoBeca = pedido.getDescuentoBeca();
         BigDecimal montoEfectivo = pedido.getTotal();
 
-        // Determinar método real según los montos
         MetodoPagoEnum metodoFinal = metodo;
         if (montoBeca.compareTo(BigDecimal.ZERO) > 0) {
             metodoFinal = montoEfectivo.compareTo(BigDecimal.ZERO) > 0
-                ? MetodoPagoEnum.MIXTO
-                : MetodoPagoEnum.BECA;
+                    ? MetodoPagoEnum.MIXTO
+                    : MetodoPagoEnum.BECA;
         }
 
         return new Pago(pedido.getIdPedido(), pedido.getIdUsuario(),
-                        pedido.getSubtotal(), montoBeca, metodoFinal);
+                pedido.getSubtotal(), montoBeca, metodoFinal);
     }
 
+    /*
+      Obtiene los detalles del pedido con el platillo cargado vía JOIN.
+      MODIFICADO: ahora carga el objeto Platillo completo para que el JSP
+      y el PDF puedan mostrar el nombre real.
+     */
     private List<DetallePedido> obtenerDetalles(Long idPedido) throws SQLException {
         String sql = """
             SELECT d.id_detalle, d.id_pedido, d.id_platillo, d.cantidad,
                    d.precio_unitario, d.subtotal, d.cubierto_por_beca,
-                   d.personalizaciones
+                   d.personalizaciones,
+                   p.nombre AS platillo_nombre, p.descripcion AS platillo_desc,
+                   p.precio AS platillo_precio, p.imagen AS platillo_imagen,
+                   p.tipo AS platillo_tipo
             FROM detalle_pedido d
+            LEFT JOIN platillo p ON d.id_platillo = p.id_platillo
             WHERE d.id_pedido = ?
             """;
 
@@ -413,10 +389,41 @@ public class PedidoDAO {
                 d.setSubtotal(rs.getBigDecimal("subtotal"));
                 d.setCubiertoPorBeca(rs.getBoolean("cubierto_por_beca"));
                 d.setPersonalizaciones(rs.getString("personalizaciones"));
+
+                // NUEVO: cargar el objeto Platillo del JOIN
+                String nomPlat = rs.getString("platillo_nombre");
+                if (nomPlat != null) {
+                    Platillo plat = new Platillo();
+                    plat.setIdPlatillo(d.getIdPlatillo());
+                    plat.setNombre(nomPlat);
+                    plat.setDescripcion(rs.getString("platillo_desc"));
+                    plat.setPrecio(rs.getBigDecimal("platillo_precio"));
+                    plat.setImagen(rs.getString("platillo_imagen"));
+                    String tipoStr = rs.getString("platillo_tipo");
+                    if (tipoStr != null) {
+                        plat.setTipo(TipoPlatEnum.valueOf(tipoStr));
+                    }
+                    d.setPlatillo(plat);
+                }
+
                 lista.add(d);
             }
         }
         return lista;
+    }
+
+    /*
+     Obtiene el método de pago de un pedido desde la tabla pago.
+     */
+    private String obtenerMetodoPago(Long idPedido) throws SQLException {
+        String sql = "SELECT metodo_pago FROM pago WHERE id_pedido = ? LIMIT 1";
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setLong(1, idPedido);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return rs.getString("metodo_pago");
+            return null;
+        }
     }
 
     private ProgramacionPedido obtenerProgramacion(Long idPedido) throws SQLException {

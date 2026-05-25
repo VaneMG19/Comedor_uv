@@ -47,7 +47,6 @@ public class Calificacion {
 
     /*
       Retorna estrellas como texto para los JSP.
-      Ej: puntuacion=4 → "★★★★☆"
      */
     public String getEstrellas() {
         return "★".repeat(puntuacion) + "☆".repeat(5 - puntuacion);

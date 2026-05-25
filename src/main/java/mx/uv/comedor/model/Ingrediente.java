@@ -3,7 +3,7 @@ package mx.uv.comedor.model;
 import java.math.BigDecimal;
 
 /*
-  POJO que representa la tabla 'ingrediente'.
+   que representa la tabla 'ingrediente'.
   El stock se actualiza automáticamente via trigger en BD
   cada vez que se inserta un movimiento_inventario.
  */

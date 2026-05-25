@@ -116,7 +116,8 @@ public class PedidoServlet extends HttpServlet {
 
         String tipoStr = req.getParameter("tipoPedido");
         TipoPedidoEnum tipo = TipoPedidoEnum.valueOf(tipoStr != null ? tipoStr : "INMEDIATO");
-        MetodoPagoEnum metodo = MetodoPagoEnum.valueOf(req.getParameter("metodoPago"));
+        String metodoStr = req.getParameter("metodoPago");
+        MetodoPagoEnum metodo = MetodoPagoEnum.valueOf(metodoStr != null ? metodoStr : "EFECTIVO");
 
         String[] idsPlat    = req.getParameterValues("platilloId");
         String[] cantidades = req.getParameterValues("cantidad");

@@ -28,6 +28,9 @@ public class Pedido {
     private Pago                   pago;
     private ProgramacionPedido     programacion;  // solo si tipo=ANTICIPADO
 
+    // NUEVO: campo transient cargado desde la tabla pago para mostrar el método de pago
+    private String metodoPagoDisplay;
+
     public Pedido() {}
 
     public Pedido(Long idUsuario, TipoPedidoEnum tipo) {
@@ -42,10 +45,6 @@ public class Pedido {
 
     // Métodos de negocio
 
-    /*
-      Recalcula subtotal, descuentoBeca y total a partir de los detalles.
-      Llamar antes de persistir.
-     */
     public void calcularTotal() {
         this.subtotal      = BigDecimal.ZERO;
         this.descuentoBeca = BigDecimal.ZERO;
@@ -73,16 +72,10 @@ public class Pedido {
         this.estado = EstadoPedidoEnum.PREPARANDO;
     }
 
-    /*
-      Indica si este pedido tiene programación de recogida.
-     */
     public boolean esProgramado() {
         return tipo == TipoPedidoEnum.ANTICIPADO;
     }
 
-    /*
-      Agrega un detalle al pedido.
-     */
     public void agregarDetalle(DetallePedido detalle) {
         detalle.setIdPedido(this.idPedido);
         detalles.add(detalle);
@@ -116,6 +109,10 @@ public class Pedido {
     public void setPago(Pago p)             { this.pago = p; }
     public ProgramacionPedido getProgramacion(){ return programacion; }
     public void setProgramacion(ProgramacionPedido p){ this.programacion = p; }
+
+    // NUEVO
+    public String getMetodoPagoDisplay()       { return metodoPagoDisplay; }
+    public void setMetodoPagoDisplay(String m) { this.metodoPagoDisplay = m; }
 
     @Override
     public String toString() {

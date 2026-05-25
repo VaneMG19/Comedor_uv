@@ -1,0 +1,54 @@
+<%-- Fragmento reutilizable de tarjeta de platillo (carrito) --%>
+<div class="platillo-card"
+     data-nombre="<%= p.getNombre() %>"
+     data-precio="<%= p.getPrecio().toPlainString() %>"
+     data-categoria="<%= p.getCategoria() != null ? p.getCategoria().name() : "OTRO" %>"
+     onclick="abrirPlatillo(<%= p.getIdPlatillo() %>,
+        '<%= escapeJS(p.getNombre()) %>',
+        '<%= escapeJS(p.getDescripcion() != null ? p.getDescripcion() : "") %>',
+        '<%= precioFinal %>',
+        <%= p.getTiempoPrep() %>,
+        '<%= p.getImagen() != null ? p.getImagen() : "" %>',
+        <%= cubiertoXBeca %>,
+        <%= p.getInformacionNutricional() != null ? buildNutriJSON(p.getInformacionNutricional()) : "null" %>
+     )">
+
+    <% if (p.getTipo() == TipoPlatEnum.MENU) { %>
+    <span class="platillo-badge menu">Menú del día</span>
+    <% } else { %>
+    <span class="platillo-badge carta">A la carta</span>
+    <% } %>
+    <% if (cubiertoXBeca) { %>
+    <span class="platillo-badge beca" style="left:auto;right:10px;">Beca</span>
+    <% } %>
+
+    <div class="platillo-card-img">
+        <% if (p.getImagen() != null && !p.getImagen().isEmpty()) { %>
+        <img src="<%= p.getImagen() %>" alt="<%= p.getNombre() %>">
+        <% } else { %>
+
+        <% } %>
+    </div>
+
+    <div class="platillo-card-body">
+        <div class="platillo-card-nombre"><%= p.getNombre() %></div>
+        <% if (p.getDescripcion() != null) { %>
+        <div class="platillo-card-desc"><%= p.getDescripcion() %></div>
+        <% } %>
+    </div>
+
+    <div class="platillo-card-footer">
+        <div class="platillo-precio <%= cubiertoXBeca ? "gratis" : "" %>">
+            <%= cubiertoXBeca ? "Gratis" : "$" + p.getPrecio().toPlainString() %>
+        </div>
+        <% if (!esAdmin) { %>
+        <button class="btn-agregar"
+                onclick="event.stopPropagation();
+                         agregarRapido(<%= p.getIdPlatillo() %>,
+                            '<%= escapeJS(p.getNombre()) %>',
+                            '<%= precioFinal %>',
+                            <%= cubiertoXBeca %>)"
+                title="Agregar al carrito">+</button>
+        <% } %>
+    </div>
+</div>

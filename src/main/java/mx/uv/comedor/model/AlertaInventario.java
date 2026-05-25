@@ -27,8 +27,8 @@ public class AlertaInventario {
         this.atendida = true;
     }
 
-    /**
-     * Retorna un ícono según el nivel para usar en el JSP.
+    /*
+     Retorna un ícono según el nivel para usar en el JSP.
      */
     public String getIconoNivel() {
         return switch (nivel) {

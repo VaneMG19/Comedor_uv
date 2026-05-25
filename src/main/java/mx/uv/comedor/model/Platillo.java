@@ -2,11 +2,6 @@ package mx.uv.comedor.model;
 
 import java.math.BigDecimal;
 
-/*
-  POJO que representa la tabla 'platillo'.
-  tipo=MENU  → aparece en el menú del día, puede ser cubierto por beca
-  tipo=CARTA → siempre disponible, NUNCA cubierto por beca
- */
 public class Platillo {
 
     private Long          idPlatillo;
@@ -17,42 +12,31 @@ public class Platillo {
     private String        imagen;
     private boolean       disponible;
     private TipoPlatEnum  tipo;
+    private CategoriaPlatEnum categoria;
     private int           tiempoPrep;
-
     private InformacionNutricional informacionNutricional;
 
     public Platillo() {}
 
     public Platillo(String nombre, BigDecimal precio, TipoPlatEnum tipo) {
-        this.nombre     = nombre;
-        this.precio     = precio;
-        this.tipo       = tipo;
+        this.nombre = nombre;
+        this.precio = precio;
+        this.tipo   = tipo;
+        this.categoria = CategoriaPlatEnum.OTRO;
         this.disponible = true;
         this.tiempoPrep = 15;
     }
 
-    // Métodos de negocio
-
-    /*
-      Calcula el precio que paga el usuario según su rol.
-      Becado + tipo=MENU → $0.00 (gratis)
-      Cualquier usuario + tipo=CARTA → precio normal
+    /**
+     * Calcula el precio final aplicando precio subsidiado si el usuario es estudiante/becado.
      */
     public BigDecimal calcularPrecioFinal(RolEnum rol) {
-        if (rol == RolEnum.BECADO && tipo == TipoPlatEnum.MENU) {
-            return BigDecimal.ZERO;
+        if (precioSubsidiado != null
+                && (rol == RolEnum.ESTUDIANTE || rol == RolEnum.BECADO)) {
+            return precioSubsidiado;
         }
         return precio;
     }
-
-    public boolean esDelMenu() { return tipo == TipoPlatEnum.MENU; }
-    public boolean esDeCarta() { return tipo == TipoPlatEnum.CARTA; }
-
-    public void toggleDisponibilidad() {
-        this.disponible = !this.disponible;
-    }
-
-    // Getters y Setters
 
     public Long getIdPlatillo()              { return idPlatillo; }
     public void setIdPlatillo(Long id)       { this.idPlatillo = id; }
@@ -70,13 +54,10 @@ public class Platillo {
     public void setDisponible(boolean d)     { this.disponible = d; }
     public TipoPlatEnum getTipo()            { return tipo; }
     public void setTipo(TipoPlatEnum t)      { this.tipo = t; }
+    public CategoriaPlatEnum getCategoria()  { return categoria; }
+    public void setCategoria(CategoriaPlatEnum c) { this.categoria = c; }
     public int getTiempoPrep()               { return tiempoPrep; }
     public void setTiempoPrep(int t)         { this.tiempoPrep = t; }
     public InformacionNutricional getInformacionNutricional() { return informacionNutricional; }
     public void setInformacionNutricional(InformacionNutricional i) { this.informacionNutricional = i; }
-
-    @Override
-    public String toString() {
-        return "Platillo{id=" + idPlatillo + ", nombre='" + nombre + "', tipo=" + tipo + "}";
-    }
 }

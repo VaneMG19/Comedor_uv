@@ -3,7 +3,7 @@ package mx.uv.comedor.model;
 import java.time.LocalDateTime;
 
 /*
-  POJO que representa la tabla 'usuario'.
+  representa la tabla 'usuario'.
   Clase base para todos los roles del sistema.
  */
 public class Usuario {

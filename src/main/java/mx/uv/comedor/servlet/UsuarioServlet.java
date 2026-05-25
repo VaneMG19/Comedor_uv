@@ -50,10 +50,51 @@ public class UsuarioServlet extends HttpServlet {
                 req.setAttribute("usuario", u);
                 req.getRequestDispatcher("/WEB-INF/vistas/admin/usuario-detalle.jsp").forward(req, resp);
             } else {
-                List<Usuario> lista = usuarioDAO.listarTodos();
+                // Filtrado por rol y búsqueda
+                String rolFiltro = req.getParameter("rol");
+                String busqueda  = req.getParameter("q");
+
+                List<Usuario> lista;
+                if (rolFiltro != null && !rolFiltro.isBlank() && !"TODOS".equals(rolFiltro)) {
+                    try {
+                        RolEnum rol = RolEnum.valueOf(rolFiltro);
+                        lista = usuarioDAO.listarPorRol(rol);
+                    } catch (IllegalArgumentException e) {
+                        lista = usuarioDAO.listarTodos();
+                    }
+                } else {
+                    lista = usuarioDAO.listarTodos();
+                }
+
+                if (busqueda != null && !busqueda.isBlank()) {
+                    String q = busqueda.toLowerCase().trim();
+                    lista = lista.stream()
+                            .filter(u -> u.getNombreCompleto().toLowerCase().contains(q)
+                                    || u.getEmail().toLowerCase().contains(q))
+                            .toList();
+                }
+
+                // Conteos por rol para mostrar en los tabs
+                List<Usuario> todos = usuarioDAO.listarTodos();
+                long countEst = todos.stream().filter(u -> u.getRol() == RolEnum.ESTUDIANTE).count();
+                long countBec = todos.stream().filter(u -> u.getRol() == RolEnum.BECADO).count();
+                long countDoc = todos.stream().filter(u -> u.getRol() == RolEnum.DOCENTE).count();
+                long countEmp = todos.stream().filter(u -> u.getRol() == RolEnum.EMPLEADO).count();
+                long countAdm = todos.stream().filter(u -> u.getRol() == RolEnum.ADMIN).count();
+
                 req.setAttribute("usuarios", lista);
+                req.setAttribute("rolFiltro", rolFiltro != null ? rolFiltro : "TODOS");
+                req.setAttribute("busqueda", busqueda != null ? busqueda : "");
+                req.setAttribute("totalUsuarios", todos.size());
+                req.setAttribute("countEst", countEst);
+                req.setAttribute("countBec", countBec);
+                req.setAttribute("countDoc", countDoc);
+                req.setAttribute("countEmp", countEmp);
+                req.setAttribute("countAdm", countAdm);
+
                 req.getRequestDispatcher("/WEB-INF/vistas/admin/usuarios-lista.jsp").forward(req, resp);
             }
+
         } catch (SQLException e) {
             e.printStackTrace();
             req.setAttribute("error", "Error al cargar usuarios");

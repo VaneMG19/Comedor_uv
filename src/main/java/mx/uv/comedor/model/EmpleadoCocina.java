@@ -1,7 +1,7 @@
 package mx.uv.comedor.model;
 
 /*
-  POJO que representa la tabla 'empleado_cocina'.
+   representa la tabla 'empleado_cocina'.
  */
 public class EmpleadoCocina {
 

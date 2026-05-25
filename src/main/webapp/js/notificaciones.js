@@ -1,140 +1,157 @@
-/*
-  notificaciones.js
-  Polling de notificaciones en tiempo real.
+/**
+ * notificaciones.js — Polling + dropdown clickeable
+ * v2 — campana funcional
  */
+window.NotificacionesPolling = (() => {
+    const INTERVALO_MS = 10000;
+    let notificacionesActuales = [];
 
-const NotificacionesPolling = (() => {
+    const getBadge    = () => document.getElementById('notif-badge');
+    const getDropdown = () => document.getElementById('notif-dropdown');
 
-    const INTERVALO_MS = 10000; // cada 10 segundos
-    let intervaloId    = null;
-
-    // Elementos del DOM
-    const getBadge  = () => document.getElementById('notif-badge');
-    const getCampana = () => document.getElementById('notif-campana');
-    const getLista  = () => document.getElementById('notif-lista');
-
-    // Iniciar polling
     function iniciar(contextPath) {
         const url = `${contextPath}/notificaciones/nuevas`;
         consultar(url);
-        intervaloId = setInterval(() => consultar(url), INTERVALO_MS);
+        setInterval(() => consultar(url), INTERVALO_MS);
+
+        // Cerrar dropdown al hacer clic fuera
+        document.addEventListener('click', (e) => {
+            const dd = getDropdown();
+            if (dd && dd.style.display === 'block'
+                && !dd.contains(e.target)
+                && !e.target.closest('#notif-campana')) {
+                dd.style.display = 'none';
+            }
+        });
     }
 
-    function detener() {
-        if (intervaloId) clearInterval(intervaloId);
-    }
-
-    // Consultar al servidor
     async function consultar(url) {
         try {
             const resp = await fetch(url, { credentials: 'same-origin' });
             if (!resp.ok) return;
-
             const data = await resp.json();
+            notificacionesActuales = data.notificaciones || [];
             actualizarBadge(data.total);
-
-            if (data.total > 0) {
-                mostrarToast(data.notificaciones[0]);
-                actualizarLista(data.notificaciones);
-            }
-
+            const dd = getDropdown();
+            if (dd && dd.style.display === 'block') renderDropdown();
         } catch (err) {
-            // Silenciar errores de red — el usuario no debe ver alertas por esto
+            console.warn('[Notif] Error:', err);
         }
     }
 
-    //  Actualizar badge (número en la campana)
     function actualizarBadge(total) {
         const badge = getBadge();
         if (!badge) return;
+        badge.textContent = total > 9 ? '9+' : total;
+        badge.style.display = total > 0 ? 'inline-flex' : 'none';
+    }
 
-        if (total > 0) {
-            badge.textContent = total > 9 ? '9+' : total;
-            badge.style.display = 'inline-block';
+    function toggleDropdown() {
+        const dd = getDropdown();
+        if (!dd) {
+            console.warn('[Notif] #notif-dropdown no existe en el DOM');
+            return;
+        }
+        if (dd.style.display === 'block') {
+            dd.style.display = 'none';
         } else {
-            badge.style.display = 'none';
+            renderDropdown();
+            dd.style.display = 'block';
         }
     }
 
-    // Toast: notificación flotante
-    function mostrarToast(notif) {
-        // Evitar duplicados — verificar si ya se mostró este ID
-        const yaVisto = sessionStorage.getItem(`notif_${notif.id}`);
-        if (yaVisto) return;
-        sessionStorage.setItem(`notif_${notif.id}`, '1');
+    function renderDropdown() {
+        const dd = getDropdown();
+        if (!dd) return;
 
-        const toast = document.createElement('div');
-        toast.className = 'notif-toast';
-        toast.innerHTML = `
-            <span class="notif-icono">${notif.icono}</span>
-            <div class="notif-contenido">
-                <strong>${notif.titulo}</strong>
-                <p>${notif.mensaje}</p>
+        if (notificacionesActuales.length === 0) {
+            dd.innerHTML = `
+                <div style="padding:20px;text-align:center;color:var(--uv-gris-500);">
+                    <div style="font-size:2rem;margin-bottom:8px;">🔕</div>
+                    <div style="font-size:.9rem;font-weight:600;">Sin notificaciones</div>
+                    <div style="font-size:.75rem;margin-top:4px;">
+                        Te avisaremos cuando algo importante pase
+                    </div>
+                </div>`;
+            return;
+        }
+
+        const ctx = document.body.dataset.contextPath || '';
+        let html = `
+            <div style="padding:14px 16px;border-bottom:1px solid var(--color-borde);
+                        display:flex;justify-content:space-between;align-items:center;">
+                <span style="font-family:var(--fuente-display);font-weight:700;
+                             color:var(--uv-azul);font-size:.95rem;">
+                    🔔 Notificaciones
+                </span>
+                <button onclick="NotificacionesPolling.marcarTodasLeidas()"
+                        style="border:none;background:none;color:var(--uv-azul);
+                               font-size:.75rem;cursor:pointer;font-weight:600;">
+                    Marcar todas leídas
+                </button>
             </div>
-            <button onclick="this.parentElement.remove()">✕</button>
-        `;
+            <div style="max-height:380px;overflow-y:auto;">`;
 
-        // Navegar al objeto relacionado al hacer clic
-        if (notif.idReferencia && notif.modulo === 'PEDIDO') {
-            toast.style.cursor = 'pointer';
-            toast.addEventListener('click', () => {
-                const ctx = document.body.dataset.contextPath || '';
-                window.location.href = `${ctx}/pedido/detalle?id=${notif.idReferencia}`;
-            });
-        }
-
-        document.body.appendChild(toast);
-
-        // Auto-ocultar después de 5 segundos
-        setTimeout(() => toast.remove(), 5000);
-
-        // Marcar como leída en el servidor
-        marcarLeida(notif.id);
+        notificacionesActuales.forEach(n => {
+            const icono = n.icono || '🔔';
+            const clickable = n.idReferencia && n.modulo === 'PEDIDO';
+            html += `
+                <div style="padding:12px 16px;border-bottom:1px solid var(--color-borde);
+                            display:flex;gap:10px;align-items:flex-start;
+                            cursor:${clickable ? 'pointer' : 'default'};
+                            transition:background .15s;"
+                     onmouseover="this.style.background='var(--uv-gris-100)';"
+                     onmouseout="this.style.background='white';"
+                     ${clickable ? `onclick="window.location.href='${ctx}/pedido/detalle?id=${n.idReferencia}'"` : ''}>
+                    <div style="font-size:1.4rem;flex-shrink:0;">${icono}</div>
+                    <div style="flex:1;min-width:0;">
+                        <div style="font-weight:700;font-size:.85rem;margin-bottom:2px;">
+                            ${escapeHtml(n.titulo)}
+                        </div>
+                        <div style="font-size:.78rem;color:var(--uv-gris-700);line-height:1.4;">
+                            ${escapeHtml(n.mensaje)}
+                        </div>
+                    </div>
+                    <button onclick="event.stopPropagation();NotificacionesPolling.marcarLeida(${n.id})"
+                            title="Marcar como leída"
+                            style="border:none;background:none;cursor:pointer;
+                                   color:var(--uv-gris-500);font-size:.85rem;flex-shrink:0;">✕</button>
+                </div>`;
+        });
+        html += `</div>`;
+        dd.innerHTML = html;
     }
 
-    // Actualizar lista desplegable
-    function actualizarLista(notificaciones) {
-        const lista = getLista();
-        if (!lista) return;
-
-        lista.innerHTML = notificaciones.map(n => `
-            <li class="notif-item notif-${n.tipo.toLowerCase()}">
-                <span>${n.icono}</span>
-                <div>
-                    <strong>${n.titulo}</strong>
-                    <small>${n.mensaje}</small>
-                </div>
-            </li>
-        `).join('');
-    }
-
-    // Marcar leída
     async function marcarLeida(id) {
         const ctx = document.body.dataset.contextPath || '';
-        const form = new FormData();
-        form.append('id', id);
-        await fetch(`${ctx}/notificaciones/leer`, {
-            method: 'POST',
-            body: form,
-            credentials: 'same-origin'
-        });
+        try {
+            const form = new FormData();
+            form.append('id', id);
+            await fetch(`${ctx}/notificaciones/leer`, {
+                method: 'POST', body: form, credentials: 'same-origin'
+            });
+            notificacionesActuales = notificacionesActuales.filter(n => n.id !== id);
+            actualizarBadge(notificacionesActuales.length);
+            renderDropdown();
+        } catch (e) { console.warn(e); }
     }
 
-    async function marcarTodasLeidas(contextPath) {
-        await fetch(`${contextPath}/notificaciones/leerTodas`, {
-            method: 'POST',
-            credentials: 'same-origin'
-        });
-        actualizarBadge(0);
-        const lista = getLista();
-        if (lista) lista.innerHTML = '<li>No hay notificaciones pendientes</li>';
+    async function marcarTodasLeidas() {
+        for (const n of notificacionesActuales.slice()) {
+            await marcarLeida(n.id);
+        }
     }
 
-    return { iniciar, detener, marcarTodasLeidas };
+    function escapeHtml(s) {
+        if (s == null) return '';
+        return String(s)
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
 
+    return { iniciar, marcarLeida, marcarTodasLeidas, toggleDropdown };
 })();
 
-// Auto-iniciar cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', () => {
     const ctx = document.body.dataset.contextPath || '';
     NotificacionesPolling.iniciar(ctx);
