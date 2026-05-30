@@ -3,7 +3,7 @@
 <div class="carrito-drawer" id="carrito-drawer">
     <div class="carrito-header">
         <div class="carrito-titulo">🛒 Mi Carrito</div>
-        <button class="carrito-cerrar" onclick="toggleCarrito()">✕</button>
+        <button class="carrito-cerrar" onclick="toggleCarrito()">X</button>
     </div>
     <div class="carrito-items" id="carrito-items">
         <div id="carrito-vacio" style="text-align:center;padding:40px 20px;color:var(--uv-gris-500);">
@@ -25,11 +25,11 @@
             <div style="display:flex;gap:8px;">
                 <label style="flex:1;cursor:pointer;font-size:.875rem;">
                     <input type="radio" name="tipoPedido" value="INMEDIATO" checked
-                           onchange="actualizarTipoPedido(this.value)"> Inmediato
+                           onchange="actualizarTipoPedido(this.value)">Inmediato
                 </label>
                 <label style="flex:1;cursor:pointer;font-size:.875rem;">
                     <input type="radio" name="tipoPedido" value="ANTICIPADO"
-                           onchange="actualizarTipoPedido(this.value)"> Programar
+                           onchange="actualizarTipoPedido(this.value)">Programar
                 </label>
             </div>
         </div>
@@ -47,12 +47,14 @@
             <label class="form-label">Método de pago</label>
             <select id="metodoPago" class="form-control" onchange="onMetodoPagoChange(this.value)">
                 <option value="EFECTIVO">Efectivo</option>
-                <option value="TARJETA"> Tarjeta</option>
+                <option value="TARJETA">Tarjeta</option>
             </select>
+
+            <!-- Selector de tarjetas (se llena con JS cuando se elige TARJETA) -->
             <div id="selector-tarjeta-cont" style="display:none;margin-top:12px;"></div>
         </div>
         <button class="btn btn-primario btn-block btn-lg" onclick="confirmarPedido()">
-            Confirmar Pedido →
+            Confirmar Pedido
         </button>
     </div>
 </div>
@@ -63,13 +65,13 @@
     <div class="modal" style="max-width:580px;">
         <div class="modal-header">
             <div class="modal-titulo" id="modal-platillo-nombre">Platillo</div>
-            <button class="modal-cerrar" onclick="cerrarModalPlatillo()">✕</button>
+            <button class="modal-cerrar" onclick="cerrarModalPlatillo()">X</button>
         </div>
         <div class="modal-body">
             <div id="modal-platillo-img"
                  style="width:100%;height:200px;border-radius:12px;overflow:hidden;
-                        background:var(--uv-gris-200);margin-bottom:16px;
-                        display:flex;align-items:center;justify-content:center;font-size:4rem;"></div>
+ background:var(--uv-gris-200);margin-bottom:16px;
+ display:flex;align-items:center;justify-content:center;font-size:4rem;"></div>
             <div class="tabs" style="margin-bottom:16px;">
                 <button class="tab-btn activo" onclick="switchModalTab('detalle',this)">Detalle</button>
                 <button class="tab-btn" onclick="switchModalTab('nutricion',this)">Nutrición</button>
@@ -83,7 +85,7 @@
                     </div>
                     <div style="text-align:right;">
                         <span style="font-size:.8rem;color:var(--uv-gris-500);">Tiempo estimado</span>
-                        <div id="modal-platillo-tiempo" style="font-weight:600;">15 min</div>
+                        <div id="modal-platillo-tiempo" style="font-weight:600;"> 15 min</div>
                     </div>
                 </div>
                 <div class="form-group">
@@ -113,9 +115,9 @@
     </div>
 </div>
 
-<%-- CACHE-BUSTING: agrega ?v=N para forzar recarga del JS --%>
-<script src="${pageContext.request.contextPath}/js/styles.js?v=3"></script>
-<script src="${pageContext.request.contextPath}/js/notificaciones.js?v=3"></script>
-<script src="${pageContext.request.contextPath}/js/carrito.js?v=3"></script>
+<script src="${pageContext.request.contextPath}/js/styles.js"></script>
+<script src="${pageContext.request.contextPath}/js/notificaciones.js"></script>
+<script src="${pageContext.request.contextPath}/js/carrito.js"></script>
+<script src="${pageContext.request.contextPath}/js/accesibilidad.js"></script>
 </body>
 </html>

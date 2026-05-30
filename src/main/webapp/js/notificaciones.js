@@ -1,20 +1,39 @@
-/**
- * notificaciones.js — Polling + dropdown clickeable
- * v2 — campana funcional
+/*
+  notificaciones.js
+  Toast flotante para notificaciones nuevas
  */
 window.NotificacionesPolling = (() => {
-    const INTERVALO_MS = 10000;
+    const INTERVALO_MS = 15000;
+    const TOAST_DURACION_MS = 8000;
+    const LS_KEY = 'comedor_notif_mostradas';
     let notificacionesActuales = [];
+    let ctxPath = '';
 
     const getBadge    = () => document.getElementById('notif-badge');
     const getDropdown = () => document.getElementById('notif-dropdown');
 
-    function iniciar(contextPath) {
-        const url = `${contextPath}/notificaciones/nuevas`;
-        consultar(url);
-        setInterval(() => consultar(url), INTERVALO_MS);
+    // localStorage helpers
+    function obtenerIdsMostrados() {
+        try {
+            const raw = localStorage.getItem(LS_KEY);
+            return raw ? new Set(JSON.parse(raw)) : new Set();
+        } catch { return new Set(); }
+    }
+    function guardarIdsMostrados(set) {
+        try {
+            // Limitar a los ultimos 100 para no crecer infinitamente
+            const arr = Array.from(set).slice(-100);
+            localStorage.setItem(LS_KEY, JSON.stringify(arr));
+        } catch {}
+    }
 
-        // Cerrar dropdown al hacer clic fuera
+    function iniciar(contextPath) {
+        ctxPath = contextPath;
+        console.log('[Notif] Iniciado con ctx:', ctxPath);
+        crearContenedorToasts();
+        consultar();
+        setInterval(consultar, INTERVALO_MS);
+
         document.addEventListener('click', (e) => {
             const dd = getDropdown();
             if (dd && dd.style.display === 'block'
@@ -25,18 +44,121 @@ window.NotificacionesPolling = (() => {
         });
     }
 
-    async function consultar(url) {
+    function crearContenedorToasts() {
+        if (document.getElementById('notif-toasts')) return;
+        const div = document.createElement('div');
+        div.id = 'notif-toasts';
+        div.style.cssText = `
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 9999;
+            max-width: 340px;
+            pointer-events: none;
+        `;
+        document.body.appendChild(div);
+    }
+
+    async function consultar() {
         try {
-            const resp = await fetch(url, { credentials: 'same-origin' });
-            if (!resp.ok) return;
+            const resp = await fetch(`${ctxPath}/notificaciones/nuevas`,
+                { credentials: 'same-origin' });
+            if (!resp.ok) {
+                console.warn('[Notif] HTTP', resp.status);
+                return;
+            }
             const data = await resp.json();
-            notificacionesActuales = data.notificaciones || [];
-            actualizarBadge(data.total);
+            const notifs = data.notificaciones || [];
+
+            // Mostrar toast SOLO para IDs que no esten en localStorage
+            const yaMostrados = obtenerIdsMostrados();
+            let huboNuevos = false;
+            notifs.forEach(n => {
+                if (!yaMostrados.has(n.id)) {
+                    console.log('[Notif] Mostrando toast para ID:', n.id);
+                    mostrarToast(n);
+                    yaMostrados.add(n.id);
+                    huboNuevos = true;
+                }
+            });
+            if (huboNuevos) guardarIdsMostrados(yaMostrados);
+
+            notificacionesActuales = notifs;
+            actualizarBadge(data.total != null ? data.total : notifs.length);
             const dd = getDropdown();
             if (dd && dd.style.display === 'block') renderDropdown();
         } catch (err) {
             console.warn('[Notif] Error:', err);
         }
+    }
+
+    function mostrarToast(notif) {
+        const cont = document.getElementById('notif-toasts');
+        if (!cont) {
+            console.warn('[Notif] No hay contenedor de toasts');
+            return;
+        }
+
+        const toast = document.createElement('div');
+        toast.style.cssText = `
+            background: white;
+            border-left: 4px solid #1f4480;
+            border-radius: 10px;
+            padding: 14px 18px;
+            box-shadow: 0 6px 20px rgba(0,0,0,.18);
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            opacity: 0;
+            transform: translateX(360px);
+            transition: opacity .3s, transform .3s;
+            pointer-events: auto;
+            cursor: pointer;
+        `;
+
+        toast.innerHTML = `
+            <div style="flex:1;min-width:0;">
+                <div style="font-weight:700;font-size:.9rem;color:#1f4480;
+                            margin-bottom:3px;">
+                    ${escapeHtml(notif.titulo)}
+                </div>
+                <div style="font-size:.8rem;color:#374151;line-height:1.4;">
+                    ${escapeHtml(notif.mensaje)}
+                </div>
+            </div>
+            <button style="border:none;background:none;cursor:pointer;
+                           color:#6b7280;font-size:1rem;font-weight:700;
+                           flex-shrink:0;padding:0 4px;line-height:1;">X</button>
+        `;
+
+        const btnCerrar = toast.querySelector('button');
+        btnCerrar.addEventListener('click', (e) => {
+            e.stopPropagation();
+            cerrarToast(toast);
+        });
+
+        toast.addEventListener('click', () => {
+            marcarLeida(notif.id);
+            cerrarToast(toast);
+        });
+
+        cont.appendChild(toast);
+
+        requestAnimationFrame(() => {
+            toast.style.opacity = '1';
+            toast.style.transform = 'translateX(0)';
+        });
+
+        setTimeout(() => cerrarToast(toast), TOAST_DURACION_MS);
+    }
+
+    function cerrarToast(toast) {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(360px)';
+        setTimeout(() => toast.remove(), 300);
     }
 
     function actualizarBadge(total) {
@@ -48,10 +170,7 @@ window.NotificacionesPolling = (() => {
 
     function toggleDropdown() {
         const dd = getDropdown();
-        if (!dd) {
-            console.warn('[Notif] #notif-dropdown no existe en el DOM');
-            return;
-        }
+        if (!dd) return;
         if (dd.style.display === 'block') {
             dd.style.display = 'none';
         } else {
@@ -66,56 +185,43 @@ window.NotificacionesPolling = (() => {
 
         if (notificacionesActuales.length === 0) {
             dd.innerHTML = `
-                <div style="padding:20px;text-align:center;color:var(--uv-gris-500);">
-                    <div style="font-size:2rem;margin-bottom:8px;">🔕</div>
+                <div style="padding:20px;text-align:center;color:#6b7280;">
                     <div style="font-size:.9rem;font-weight:600;">Sin notificaciones</div>
-                    <div style="font-size:.75rem;margin-top:4px;">
-                        Te avisaremos cuando algo importante pase
-                    </div>
                 </div>`;
             return;
         }
 
-        const ctx = document.body.dataset.contextPath || '';
         let html = `
-            <div style="padding:14px 16px;border-bottom:1px solid var(--color-borde);
+            <div style="padding:14px 16px;border-bottom:1px solid #e5e7eb;
                         display:flex;justify-content:space-between;align-items:center;">
-                <span style="font-family:var(--fuente-display);font-weight:700;
-                             color:var(--uv-azul);font-size:.95rem;">
-                    🔔 Notificaciones
+                <span style="font-weight:700;color:#1f4480;font-size:.95rem;">
+                    Notificaciones
                 </span>
                 <button onclick="NotificacionesPolling.marcarTodasLeidas()"
-                        style="border:none;background:none;color:var(--uv-azul);
+                        style="border:none;background:none;color:#1f4480;
                                font-size:.75rem;cursor:pointer;font-weight:600;">
-                    Marcar todas leídas
+                    Marcar todas leidas
                 </button>
             </div>
             <div style="max-height:380px;overflow-y:auto;">`;
 
         notificacionesActuales.forEach(n => {
-            const icono = n.icono || '🔔';
-            const clickable = n.idReferencia && n.modulo === 'PEDIDO';
             html += `
-                <div style="padding:12px 16px;border-bottom:1px solid var(--color-borde);
-                            display:flex;gap:10px;align-items:flex-start;
-                            cursor:${clickable ? 'pointer' : 'default'};
-                            transition:background .15s;"
-                     onmouseover="this.style.background='var(--uv-gris-100)';"
-                     onmouseout="this.style.background='white';"
-                     ${clickable ? `onclick="window.location.href='${ctx}/pedido/detalle?id=${n.idReferencia}'"` : ''}>
-                    <div style="font-size:1.4rem;flex-shrink:0;">${icono}</div>
+                <div style="padding:12px 16px;border-bottom:1px solid #e5e7eb;
+                            display:flex;gap:10px;align-items:flex-start;">
                     <div style="flex:1;min-width:0;">
                         <div style="font-weight:700;font-size:.85rem;margin-bottom:2px;">
                             ${escapeHtml(n.titulo)}
                         </div>
-                        <div style="font-size:.78rem;color:var(--uv-gris-700);line-height:1.4;">
+                        <div style="font-size:.78rem;color:#374151;line-height:1.4;">
                             ${escapeHtml(n.mensaje)}
                         </div>
                     </div>
-                    <button onclick="event.stopPropagation();NotificacionesPolling.marcarLeida(${n.id})"
-                            title="Marcar como leída"
+                    <button onclick="event.stopPropagation();NotificacionesPolling.marcarLeida(${n.id});"
+                            title="Marcar como leida"
                             style="border:none;background:none;cursor:pointer;
-                                   color:var(--uv-gris-500);font-size:.85rem;flex-shrink:0;">✕</button>
+                                   color:#6b7280;font-size:1rem;font-weight:700;
+                                   flex-shrink:0;padding:4px 8px;">X</button>
                 </div>`;
         });
         html += `</div>`;
@@ -123,23 +229,42 @@ window.NotificacionesPolling = (() => {
     }
 
     async function marcarLeida(id) {
-        const ctx = document.body.dataset.contextPath || '';
+        console.log('[Notif] Marcar leida ID:', id);
         try {
-            const form = new FormData();
-            form.append('id', id);
-            await fetch(`${ctx}/notificaciones/leer`, {
-                method: 'POST', body: form, credentials: 'same-origin'
+            const resp = await fetch(`${ctxPath}/notificaciones/leer`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'id=' + encodeURIComponent(id),
+                credentials: 'same-origin'
             });
-            notificacionesActuales = notificacionesActuales.filter(n => n.id !== id);
-            actualizarBadge(notificacionesActuales.length);
-            renderDropdown();
-        } catch (e) { console.warn(e); }
+            console.log('[Notif] Respuesta:', resp.status);
+            if (resp.ok) {
+                notificacionesActuales = notificacionesActuales.filter(n => n.id !== id);
+                actualizarBadge(notificacionesActuales.length);
+                renderDropdown();
+                setTimeout(() => consultar(), 500);
+            }
+        } catch (e) {
+            console.warn('[Notif] Error:', e);
+        }
     }
 
     async function marcarTodasLeidas() {
-        for (const n of notificacionesActuales.slice()) {
-            await marcarLeida(n.id);
+        const copia = notificacionesActuales.slice();
+        for (const n of copia) {
+            try {
+                await fetch(`${ctxPath}/notificaciones/leer`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: 'id=' + encodeURIComponent(n.id),
+                    credentials: 'same-origin'
+                });
+            } catch (e) { console.warn(e); }
         }
+        notificacionesActuales = [];
+        actualizarBadge(0);
+        renderDropdown();
+        setTimeout(() => consultar(), 500);
     }
 
     function escapeHtml(s) {

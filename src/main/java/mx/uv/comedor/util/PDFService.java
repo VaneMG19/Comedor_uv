@@ -90,7 +90,7 @@ public class PDFService {
         Document    doc    = new Document(pdf, PageSize.A4);
         doc.setMargins(40, 40, 40, 40);
 
-        // ── HEADER UV con logo ──
+        // HEADER UV con logo
         byte[] logoBytes = generarLogoUV(120);
         Image logo = new Image(ImageDataFactory.create(logoBytes))
                 .setWidth(45).setHeight(45);

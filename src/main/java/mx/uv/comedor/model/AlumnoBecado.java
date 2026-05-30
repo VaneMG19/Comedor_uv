@@ -3,7 +3,7 @@ package mx.uv.comedor.model;
 import java.time.LocalDate;
 
 /*
-  POJO que representa la tabla 'alumno_becado'.
+  representa la tabla 'alumno_becado'.
   La beca SOLO cubre platillos del menú del día (tipo = MENU).
   Los platillos a la carta siempre se pagan con efectivo o tarjeta.
  */

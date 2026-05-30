@@ -38,7 +38,7 @@ public class QRService {
         return baos.toByteArray();
     }
 
-    /** Wrapper con tamaño default de 200px */
+    /* Wrapper con tamaño default de 200px */
     public static byte[] generarQR(String contenido)
             throws WriterException, IOException {
         return generarQR(contenido, 200);

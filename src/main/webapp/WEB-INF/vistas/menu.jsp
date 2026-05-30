@@ -23,7 +23,6 @@
     List<Platillo> comidas   = platilloDAO.listarPorMenuActivoYCategoria(CatMenuEnum.COMIDA);
     List<Platillo> carta     = platilloDAO.listarCarta();
 
-    // Agrupar carta por categoría (manteniendo orden del enum)
     Map<CategoriaPlatEnum, List<Platillo>> cartaPorCat = new LinkedHashMap<>();
     for (CategoriaPlatEnum cat : CategoriaPlatEnum.values()) {
         cartaPorCat.put(cat, new java.util.ArrayList<>());
@@ -43,8 +42,9 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>Menú del Día — Comedor UV</title>
+    <title>Menu del Dia - Comedor UV</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
     <style>
         .filtros-bar {
@@ -98,6 +98,50 @@
             padding: 60px 20px;
             color: var(--uv-gris-500);
         }
+        .seccion-divider {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        .seccion-divider .bar {
+            width: 4px;
+            height: 24px;
+            border-radius: 2px;
+        }
+        .seccion-divider h2 {
+            font-family: var(--fuente-display);
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        /* === Estilos para platillos AGOTADOS === */
+        .platillo-card.platillo-agotado {
+            opacity: 0.55;
+            cursor: not-allowed;
+            position: relative;
+            pointer-events: none;
+        }
+        .platillo-card.platillo-agotado .btn-agregar {
+            pointer-events: auto;
+        }
+        .platillo-card.platillo-agotado img,
+        .platillo-card.platillo-agotado .platillo-card-img {
+            filter: grayscale(100%);
+        }
+        .platillo-badge.agotado-badge {
+            background: var(--uv-rojo);
+            color: white;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 5;
+            font-weight: 700;
+            font-size: .68rem;
+            padding: 4px 10px;
+            border-radius: 10px;
+            letter-spacing: .5px;
+        }
     </style>
 </head>
 <body data-context-path="${pageContext.request.contextPath}">
@@ -108,10 +152,10 @@
 
     <div class="page-header d-flex justify-between align-center flex-wrap gap-2">
         <div>
-            <div class="page-title">Menú de hoy 🍽️</div>
-            <div class="page-subtitle"><%= diaHoy %> —
+            <div class="page-title">Menu de hoy</div>
+            <div class="page-subtitle"><%= diaHoy %> &mdash;
                 <% if (desayunos.isEmpty() && comidas.isEmpty()) { %>
-                No hay menú registrado para hoy
+                No hay menu registrado para hoy
                 <% } else { %>
                 <%= desayunos.size() + comidas.size() %> platillos disponibles
                 <% } %>
@@ -123,43 +167,42 @@
                         text-transform:uppercase;letter-spacing:.4px;">Tu beca esta semana</div>
             <div style="font-family:var(--fuente-display);font-weight:700;font-size:1.1rem;
                         color:var(--uv-verde);margin-top:2px;">
-                🎫 <%= becado.getComidasRestantesSemana() %> comidas disponibles
+                <%= becado.getComidasRestantesSemana() %> comidas disponibles
             </div>
         </div>
         <% } %>
     </div>
 
-    <!-- Tabs -->
     <div class="tabs">
         <button class="tab-btn <%= tab.equals("dia") ? "activo" : "" %>"
                 onclick="cambiarTab('dia', this)">
-             Menú del día
+            Menu del dia
         </button>
         <button class="tab-btn <%= tab.equals("carta") ? "activo" : "" %>"
                 onclick="cambiarTab('carta', this)">
-             A la carta
+            A la carta
         </button>
     </div>
 
-    <%--  TAB: MENÚ DEL DÍA  --%>
+    <%-- ── TAB: MENU DEL DIA ─────────────────────────────── --%>
     <div id="panel-dia" style="<%= tab.equals("dia") ? "" : "display:none;" %>">
 
         <% if (desayunos.isEmpty() && comidas.isEmpty()) { %>
         <div style="text-align:center;padding:60px 20px;color:var(--uv-gris-500);">
-            <div style="font-size:3.5rem;margin-bottom:12px;"></div>
             <div style="font-family:var(--fuente-display);font-weight:700;font-size:1.1rem;">
-                Sin menú disponible hoy
+                Sin menu disponible hoy
+            </div>
+            <div style="font-size:.875rem;margin-top:6px;">
+                El administrador aun no ha publicado el menu de hoy.
             </div>
         </div>
         <% } else { %>
 
         <% if (!desayunos.isEmpty()) { %>
         <div style="margin-bottom:28px;">
-            <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
-                <div style="width:4px;height:24px;background:var(--uv-amarillo);border-radius:2px;"></div>
-                <h2 style="font-family:var(--fuente-display);font-size:1.1rem;font-weight:700;">
-                     Desayuno
-                </h2>
+            <div class="seccion-divider">
+                <div class="bar" style="background:var(--uv-amarillo);"></div>
+                <h2>Desayuno</h2>
             </div>
             <div class="platillos-grid">
                 <% for (Platillo p : desayunos) {
@@ -174,11 +217,9 @@
 
         <% if (!comidas.isEmpty()) { %>
         <div style="margin-bottom:28px;">
-            <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
-                <div style="width:4px;height:24px;background:var(--uv-verde);border-radius:2px;"></div>
-                <h2 style="font-family:var(--fuente-display);font-size:1.1rem;font-weight:700;">
-                     Comida
-                </h2>
+            <div class="seccion-divider">
+                <div class="bar" style="background:var(--uv-verde);"></div>
+                <h2>Comida</h2>
             </div>
             <div class="platillos-grid">
                 <% for (Platillo p : comidas) {
@@ -194,45 +235,43 @@
         <% } %>
     </div>
 
-    <%--TAB: A LA CARTA con filtros --%>
+    <%-- ── TAB: A LA CARTA con filtros ────────────────────── --%>
     <div id="panel-carta" style="<%= tab.equals("carta") ? "" : "display:none;" %>">
 
         <div class="alert alert-info" style="margin-bottom:16px;">
-             Los platillos a la carta están siempre disponibles y
-            <strong>no están cubiertos por la beca alimentaria</strong>.
+            Los platillos a la carta estan siempre disponibles y
+            <strong>no estan cubiertos por la beca alimentaria</strong>.
         </div>
 
         <% if (carta.isEmpty()) { %>
         <div style="text-align:center;padding:60px 20px;color:var(--uv-gris-500);">
-            <div style="font-size:3rem;margin-bottom:12px;"></div>
             <div style="font-weight:600;">Sin platillos a la carta disponibles</div>
         </div>
         <% } else { %>
 
-        <!-- BARRA DE FILTROS -->
         <div class="filtros-bar">
             <div class="filtros-row">
                 <div>
-                    <label class="form-label" style="font-size:.78rem;">🔍 Buscar</label>
+                    <label class="form-label" style="font-size:.78rem;">Buscar</label>
                     <input type="text" id="filtro-busqueda" class="form-control"
                            placeholder="Nombre del platillo..."
                            oninput="filtrarCarta()">
                 </div>
                 <div>
-                    <label class="form-label" style="font-size:.78rem;">Precio mínimo</label>
+                    <label class="form-label" style="font-size:.78rem;">Precio minimo</label>
                     <input type="number" id="filtro-min" class="form-control"
                            placeholder="$0" min="0" step="5"
                            oninput="filtrarCarta()">
                 </div>
                 <div>
-                    <label class="form-label" style="font-size:.78rem;"> Precio máximo</label>
+                    <label class="form-label" style="font-size:.78rem;">Precio maximo</label>
                     <input type="number" id="filtro-max" class="form-control"
-                           placeholder="Sin límite" min="0" step="5"
+                           placeholder="Sin limite" min="0" step="5"
                            oninput="filtrarCarta()">
                 </div>
             </div>
             <div>
-                <label class="form-label" style="font-size:.78rem;margin-bottom:8px;"> Categoría</label>
+                <label class="form-label" style="font-size:.78rem;margin-bottom:8px;">Categoria</label>
                 <div class="cat-chips">
                     <button type="button" class="cat-chip activa" data-cat="TODAS"
                             onclick="seleccionarCategoria(this)">Todas</button>
@@ -254,12 +293,11 @@
                     <%= carta.size() %> platillos
                 </div>
                 <button type="button" class="btn btn-ghost btn-sm" onclick="limpiarFiltros()">
-                    ✕ Limpiar filtros
+                    Limpiar filtros
                 </button>
             </div>
         </div>
 
-        <!-- LISTADO POR CATEGORÍA -->
         <div id="lista-carta">
             <% for (CategoriaPlatEnum cat : CategoriaPlatEnum.values()) {
                 List<Platillo> pls = cartaPorCat.get(cat);
@@ -285,8 +323,7 @@
         </div>
 
         <div id="vacio-busqueda" class="vacio-busqueda" style="display:none;">
-            <div style="font-size:2.5rem;margin-bottom:10px;">🔍</div>
-            <div style="font-weight:600;">No hay platillos que coincidan con tu búsqueda</div>
+            <div style="font-weight:600;">No hay platillos que coincidan con tu busqueda</div>
             <div style="font-size:.85rem;margin-top:4px;">Intenta con otros filtros</div>
         </div>
 
@@ -329,10 +366,9 @@
             });
         }
         actualizarBadgeCarrito();
-        mostrarMensaje(' ' + nombre + ' agregado', 'exito');
+        mostrarMensaje(nombre + ' agregado', 'exito');
     }
 
-    //  FILTROS DE A LA CARTA
     let categoriaActiva = 'TODAS';
 
     function seleccionarCategoria(btn) {
@@ -349,7 +385,6 @@
 
         let mostradas = 0;
         document.querySelectorAll('.categoria-bloque').forEach(bloque => {
-            const cat = bloque.dataset.cat;
             let visiblesEnBloque = 0;
 
             bloque.querySelectorAll('.platillo-card').forEach(card => {

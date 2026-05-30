@@ -4,16 +4,7 @@ import mx.uv.comedor.dao.AlumnoBecadoDAO;
 import mx.uv.comedor.dao.EstudianteDAO;
 import mx.uv.comedor.dao.PedidoDAO;
 import mx.uv.comedor.dao.PlatilloDAO;
-import mx.uv.comedor.model.AlumnoBecado;
-import mx.uv.comedor.model.DetallePedido;
-import mx.uv.comedor.model.Estudiante;
-import mx.uv.comedor.model.MetodoPagoEnum;
-import mx.uv.comedor.model.Pedido;
-import mx.uv.comedor.model.Platillo;
-import mx.uv.comedor.model.ProgramacionPedido;
-import mx.uv.comedor.model.RolEnum;
-import mx.uv.comedor.model.TipoPedidoEnum;
-import mx.uv.comedor.model.Usuario;
+import mx.uv.comedor.model.*;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -27,6 +18,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import mx.uv.comedor.dao.MenuSemanalDAO;
 
 @WebServlet(urlPatterns = {
         "/pedido/nuevo",
@@ -41,6 +33,7 @@ public class PedidoServlet extends HttpServlet {
     private final PlatilloDAO     platilloDAO = new PlatilloDAO();
     private final AlumnoBecadoDAO becadoDAO  = new AlumnoBecadoDAO();
     private final EstudianteDAO   estDAO     = new EstudianteDAO();
+    private final MenuSemanalDAO menuDAO = new MenuSemanalDAO();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -170,6 +163,36 @@ public class PedidoServlet extends HttpServlet {
             );
             pedido.setProgramacion(prog);
         }
+
+        // Verificar y descontar cupo de menu del dia
+        // Solo para platillos tipo MENU (no CARTA)
+        DiaEnum diaHoy = DiaEnum.desdeDayOfWeek(java.time.LocalDate.now().getDayOfWeek());
+
+        for (DetallePedido det : detalles) {
+            Platillo platillo = det.getPlatillo();
+            if (platillo == null) platillo = platilloDAO.buscarPorId(det.getIdPlatillo());
+            if (platillo == null) continue;
+
+            // Solo verificar cupo para menu del dia
+            if (platillo.getTipo() == TipoPlatEnum.MENU) {
+                // Probar con DESAYUNO primero, luego con COMIDA
+                boolean ok = menuDAO.incrementarVendidos(
+                        det.getIdPlatillo(), diaHoy, CatMenuEnum.DESAYUNO, det.getCantidad());
+                if (!ok) {
+                    ok = menuDAO.incrementarVendidos(
+                            det.getIdPlatillo(), diaHoy, CatMenuEnum.COMIDA, det.getCantidad());
+                }
+                if (!ok) {
+                    req.setAttribute("error",
+                            "El platillo \"" + platillo.getNombre()
+                                    + "\" se agoto o no esta disponible hoy.");
+                    req.getRequestDispatcher("/WEB-INF/vistas/pedido-nuevo.jsp")
+                            .forward(req, resp);
+                    return;
+                }
+            }
+        }
+
 
         Pedido pedidoCreado = pedidoDAO.crearPedidoCompleto(pedido, metodo, becado);
 

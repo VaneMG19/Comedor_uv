@@ -24,8 +24,9 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>Gestión de Menú — Comedor UV</title>
+    <title>Gestion de Menu - Comedor UV</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
     <style>
         .cat-pill {
@@ -56,35 +57,35 @@
 
     <div class="page-header d-flex justify-between align-center flex-wrap gap-2">
         <div>
-            <div class="page-title">Gestión de Menú 📋</div>
+            <div class="page-title">Gestion de Menu</div>
             <div class="page-subtitle">
-                <%= todos.size() %> platillos —
-                <%= menuDelDia.size() %> del día · <%= aLaCarta.size() %> a la carta
+                <%= todos.size() %> platillos -
+                <%= menuDelDia.size() %> del dia - <%= aLaCarta.size() %> a la carta
             </div>
         </div>
         <a href="${pageContext.request.contextPath}/admin/platillos/nuevo"
            class="btn btn-primario">
-            Nuevo platillo
+            + Nuevo platillo
         </a>
     </div>
 
     <% if (exito != null) { %>
-    <div class="alert alert-exito" data-auto-close> <%= exito %></div>
+    <div class="alert alert-exito" data-auto-close><%= exito %></div>
     <% } %>
     <% if (error != null) { %>
-    <div class="alert alert-error" data-auto-close> <%= error %></div>
+    <div class="alert alert-error" data-auto-close><%= error %></div>
     <% } %>
 
     <div class="card">
         <div class="card-header">
-            <div class="card-title"> Menú del Día (<%= menuDelDia.size() %>)</div>
+            <div class="card-title">Menu del Dia (<%= menuDelDia.size() %>)</div>
         </div>
         <div style="overflow-x:auto;">
             <table class="tabla">
                 <thead>
                 <tr>
                     <th>Platillo</th>
-                    <th>Categoría</th>
+                    <th>Categoria</th>
                     <th>Precio</th>
                     <th>P. Subsidiado</th>
                     <th>Tiempo</th>
@@ -95,7 +96,7 @@
                 <tbody>
                 <% if (menuDelDia.isEmpty()) { %>
                 <tr><td colspan="7" style="text-align:center;color:var(--uv-gris-500);padding:24px;">
-                    Sin platillos en el menú del día
+                    Sin platillos en el menu del dia
                 </td></tr>
                 <% } %>
                 <% for (Platillo p : menuDelDia) { %>
@@ -110,14 +111,14 @@
                     </td>
                     <td>
                             <span class="cat-pill">
-                                <%= p.getCategoria() != null ? p.getCategoria().getEtiqueta() : "—" %>
+                                <%= p.getCategoria() != null ? p.getCategoria().getEtiqueta() : "-" %>
                             </span>
                     </td>
                     <td style="font-weight:700;color:var(--uv-azul);">
                         $<%= p.getPrecio().toPlainString() %>
                     </td>
                     <td><%= p.getPrecioSubsidiado() != null
-                            ? "$" + p.getPrecioSubsidiado().toPlainString() : "—" %></td>
+                            ? "$" + p.getPrecioSubsidiado().toPlainString() : "-" %></td>
                     <td><%= p.getTiempoPrep() %> min</td>
                     <td>
                             <span class="estado-badge <%= p.isDisponible() ? "estado-LISTO" : "estado-CANCELADO" %>">
@@ -126,12 +127,12 @@
                     </td>
                     <td class="acciones-cell">
                         <a href="${pageContext.request.contextPath}/admin/platillos/editar?id=<%= p.getIdPlatillo() %>"
-                           class="btn btn-ghost"> Editar</a>
+                           class="btn btn-ghost">Editar</a>
                         <form method="post" action="${pageContext.request.contextPath}/admin/platillos/toggle" style="display:inline;">
                             <input type="hidden" name="idPlatillo" value="<%= p.getIdPlatillo() %>">
                             <button type="submit" class="btn btn-ghost"
                                     style="color:<%= p.isDisponible() ? "var(--uv-rojo)" : "var(--uv-verde)" %>;">
-                                <%= p.isDisponible() ? "🚫 Desact." : "✅ Activar" %>
+                                <%= p.isDisponible() ? "Desactivar" : "Activar" %>
                             </button>
                         </form>
                     </td>
@@ -151,7 +152,7 @@
                 <thead>
                 <tr>
                     <th>Platillo</th>
-                    <th>Categoría</th>
+                    <th>Categoria</th>
                     <th>Precio</th>
                     <th>Tiempo</th>
                     <th>Estado</th>
@@ -176,7 +177,7 @@
                     </td>
                     <td>
                             <span class="cat-pill">
-                                <%= p.getCategoria() != null ? p.getCategoria().getEtiqueta() : "—" %>
+                                <%= p.getCategoria() != null ? p.getCategoria().getEtiqueta() : "-" %>
                             </span>
                     </td>
                     <td style="font-weight:700;color:var(--uv-azul);">
@@ -190,12 +191,12 @@
                     </td>
                     <td class="acciones-cell">
                         <a href="${pageContext.request.contextPath}/admin/platillos/editar?id=<%= p.getIdPlatillo() %>"
-                           class="btn btn-ghost"> Editar</a>
+                           class="btn btn-ghost">Editar</a>
                         <form method="post" action="${pageContext.request.contextPath}/admin/platillos/toggle" style="display:inline;">
                             <input type="hidden" name="idPlatillo" value="<%= p.getIdPlatillo() %>">
                             <button type="submit" class="btn btn-ghost"
                                     style="color:<%= p.isDisponible() ? "var(--uv-rojo)" : "var(--uv-verde)" %>;">
-                                <%= p.isDisponible() ? "🚫 Desact." : "✅ Activar" %>
+                                <%= p.isDisponible() ? "Desactivar" : "Activar" %>
                             </button>
                         </form>
                     </td>

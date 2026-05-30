@@ -2,19 +2,19 @@
 <%@ page import="mx.uv.comedor.model.Usuario" %>
 <%
   Usuario _u = (Usuario) session.getAttribute("usuario");
-  if (_u != null) {
+  if (_u!= null) {
     response.sendRedirect(request.getContextPath() + "/menu");
     return;
   }
   String error = (String) request.getAttribute("error");
-  String msg   = request.getParameter("msg");
+  String msg  = request.getParameter("msg");
 %>
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Iniciar Sesión — Comedor UV</title>
+  <title>Iniciar Sesión - Comedor UV</title>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
   <style>
     body { background: var(--uv-azul); min-height: 100vh;
@@ -31,7 +31,7 @@
       padding: 48px 40px; display: flex; flex-direction: column;
       justify-content: space-between; position: relative; overflow: hidden;
     }
-    .login-branding::before, .login-branding::after {
+    .login-branding::before,.login-branding::after {
       content: ''; position: absolute; border-radius: 50%;
       background: rgba(255,255,255,.05);
     }
@@ -47,19 +47,19 @@
     }
     .brand-logo-text { color: white; font-family: var(--fuente-display); }
     .brand-logo-text h1 { font-size: 1.1rem; font-weight: 700; }
-    .brand-logo-text p  { font-size: .75rem; opacity: .75; margin-top: 2px; }
+    .brand-logo-text p  { font-size:.75rem; opacity:.75; margin-top: 2px; }
     .brand-content { position: relative; z-index: 1; }
     .brand-content h2 {
       color: white; font-family: var(--fuente-display);
       font-size: 1.8rem; font-weight: 800; line-height: 1.25; margin-bottom: 14px;
     }
-    .brand-content p { color: rgba(255,255,255,.75); font-size: .9rem; line-height: 1.6; }
+    .brand-content p { color: rgba(255,255,255,.75); font-size:.9rem; line-height: 1.6; }
     .brand-features { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 10px; }
     .brand-feature {
       display: flex; align-items: center; gap: 10px;
-      color: rgba(255,255,255,.9); font-size: .85rem;
+      color: rgba(255,255,255,.9); font-size:.85rem;
     }
-    .brand-feature .feat-icon {
+    .brand-feature.feat-icon {
       width: 32px; height: 32px; background: rgba(255,255,255,.15);
       border-radius: 8px; display: flex; align-items: center;
       justify-content: center; font-size: 1rem; flex-shrink: 0;
@@ -70,10 +70,10 @@
     }
     .login-title { font-family: var(--fuente-display); font-size: 1.6rem;
       font-weight: 800; color: var(--uv-gris-900); margin-bottom: 6px; }
-    .login-subtitle { color: var(--uv-gris-500); font-size: .875rem; margin-bottom: 32px; }
-    .login-form .form-group { margin-bottom: 20px; }
+    .login-subtitle { color: var(--uv-gris-500); font-size:.875rem; margin-bottom: 32px; }
+    .login-form.form-group { margin-bottom: 20px; }
     .input-icon-wrapper { position: relative; }
-    .input-icon-wrapper .form-control { padding-left: 42px; }
+    .input-icon-wrapper.form-control { padding-left: 42px; }
     .input-icon {
       position: absolute; left: 14px; top: 50%;
       transform: translateY(-50%); font-size: 1rem; pointer-events: none;
@@ -83,7 +83,7 @@
       border-radius: var(--radio-lg); margin-top: 8px;
     }
     .login-footer { margin-top: 28px; text-align: center;
-      font-size: .8rem; color: var(--uv-gris-500); }
+      font-size:.8rem; color: var(--uv-gris-500); }
     @media (max-width: 700px) {
       .login-branding { display: none; }
       .login-form-panel { width: 100%; padding: 36px 28px; }
@@ -108,16 +108,34 @@
       <p>Ordena tu comida del día, programa tu recogida y disfruta
         de platillos frescos preparados para ti.</p>
     </div>
+    <div class="brand-features">
+      <div class="brand-feature">
+        <div class="feat-icon"></div>
+        Menú del día con información nutricional
+      </div>
+      <div class="brand-feature">
+        <div class="feat-icon"></div>
+        Programa tu pedido con anticipación
+      </div>
+      <div class="brand-feature">
+        <div class="feat-icon"></div>
+        Gestión de beca alimentaria
+      </div>
+      <div class="brand-feature">
+        <div class="feat-icon"></div>
+        Comprobante PDF con código QR
+      </div>
+    </div>
   </div>
 
   <div class="login-form-panel">
     <div class="login-title">Bienvenido </div>
     <div class="login-subtitle">Inicia sesión con tu cuenta universitaria</div>
 
-    <% if (error != null && !error.isEmpty()) { %>
+    <% if (error!= null &&!error.isEmpty()) { %>
     <div class="alert alert-error" data-auto-close> <%= error %></div>
     <% } %>
-    <% if (msg != null && !msg.isEmpty()) { %>
+    <% if (msg!= null &&!msg.isEmpty()) { %>
     <div class="alert alert-exito" data-auto-close> <%= msg %></div>
     <% } %>
 
@@ -146,13 +164,13 @@
                  required autocomplete="current-password">
           <button type="button" onclick="togglePassword()"
                   style="position:absolute;right:12px;top:50%;
-                                   transform:translateY(-50%);border:none;
-                                   background:none;cursor:pointer;font-size:1rem;"></button>
+ transform:translateY(-50%);border:none;
+ background:none;cursor:pointer;font-size:1rem;"></button>
         </div>
       </div>
 
       <button type="submit" class="btn btn-primario btn-login">
-        Iniciar Sesión →
+        Iniciar Sesión
       </button>
     </form>
 
@@ -167,7 +185,7 @@
 <script>
   function togglePassword() {
     const i = document.getElementById('password');
-    i.type = i.type === 'password' ? 'text' : 'password';
+    i.type = i.type === 'password'? 'text' : 'password';
   }
   function validarLogin(form) {
     const btn = form.querySelector('button[type="submit"]');

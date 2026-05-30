@@ -1,7 +1,7 @@
 package mx.uv.comedor.model;
 
 /*
- * POJO que representa la tabla 'administrador'.
+  representa la tabla 'administrador'.
  */
 public class Administrador {
 

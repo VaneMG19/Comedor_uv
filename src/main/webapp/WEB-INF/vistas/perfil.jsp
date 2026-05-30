@@ -28,7 +28,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>Mi Perfil — Comedor UV</title>
+    <title>Mi Perfil - Comedor UV</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
     <style>
         .perfil-avatar {
@@ -55,7 +55,7 @@
             background: none;
             font-family: var(--fuente-display);
             font-weight: 600;
-            font-size: .875rem;
+            font-size:.875rem;
             color: var(--uv-gris-500);
             cursor: pointer;
             border-bottom: 2px solid transparent;
@@ -78,7 +78,7 @@
             height: 100%;
             background: linear-gradient(90deg, var(--uv-verde), #84cc16);
             border-radius: 5px;
-            transition: width .5s ease;
+            transition: width.5s ease;
         }
     </style>
 </head>
@@ -90,7 +90,7 @@
 
     <!-- Header con avatar -->
     <div style="display:flex;align-items:center;gap:20px;margin-bottom:28px;
-                flex-wrap:wrap;">
+ flex-wrap:wrap;">
         <div class="perfil-avatar">
             <%= usuario.getNombre().charAt(0) %>
             <%= usuario.getApellidos().charAt(0) %>
@@ -98,49 +98,51 @@
         <div>
             <div class="page-title"><%= usuario.getNombreCompleto() %></div>
             <div style="display:flex;align-items:center;gap:10px;margin-top:6px;
-                        flex-wrap:wrap;">
-                <span style="font-size:.85rem;color:var(--uv-gris-500);">
-                    <%= usuario.getEmail() %>
-                </span>
+ flex-wrap:wrap;">
+  <span style="font-size:.85rem;color:var(--uv-gris-500);">
+  <%= usuario.getEmail() %>
+  </span>
                 <span style="background:var(--uv-azul-light);color:var(--uv-azul);
-                             font-size:.72rem;font-weight:700;padding:3px 10px;
-                             border-radius:12px;text-transform:uppercase;">
-                    <%= usuario.getRol().name() %>
-                </span>
+ font-size:.72rem;font-weight:700;padding:3px 10px;
+ border-radius:12px;text-transform:uppercase;">
+  <%= usuario.getRol().name() %>
+  </span>
                 <% if (usuario.isActivo()) { %>
                 <span style="background:var(--uv-verde-light);color:var(--uv-verde-dark);
-                             font-size:.72rem;font-weight:700;padding:3px 10px;
-                             border-radius:12px;">
-                    ● Cuenta activa
-                </span>
+ font-size:.72rem;font-weight:700;padding:3px 10px;
+ border-radius:12px;">
+ Cuenta activa
+  </span>
                 <% } %>
             </div>
         </div>
     </div>
 
-    <% if (exito != null) { %>
+    <% if (exito!= null) { %>
     <div class="alert alert-exito" data-auto-close> <%= exito %></div>
     <% } %>
-    <% if (error != null) { %>
+    <% if (error!= null) { %>
     <div class="alert alert-error" data-auto-close> <%= error %></div>
     <% } %>
 
     <!-- Tabs -->
     <div class="perfil-tabs">
         <button class="perfil-tab activo"
-                onclick="switchPTab('datos', this)"> Datos personales</button>
+                onclick="switchPTab('datos', this)">Datos personales</button>
         <button class="perfil-tab"
-                onclick="switchPTab('seguridad', this)"> Seguridad</button>
+                onclick="switchPTab('seguridad', this)">Seguridad</button>
+        <% if (usuario.getRol() != RolEnum.ADMIN && usuario.getRol() != RolEnum.EMPLEADO) { %>
         <button class="perfil-tab"
                 onclick="switchPTab('tarjetas', this)"> Mis Tarjetas</button>
-        <% if (usuario.getRol() == RolEnum.BECADO && becado != null) { %>
-        <button class="perfil-tab"
-                onclick="switchPTab('beca', this)"> Mi beca</button>
         <% } %>
-        <% if (estudiante != null || usuario.getRol() == RolEnum.ESTUDIANTE
+        <% if (usuario.getRol() == RolEnum.BECADO && becado!= null) { %>
+        <button class="perfil-tab"
+                onclick="switchPTab('beca', this)">Mi beca</button>
+        <% } %>
+        <% if (estudiante!= null || usuario.getRol() == RolEnum.ESTUDIANTE
                 || usuario.getRol() == RolEnum.BECADO) { %>
         <button class="perfil-tab"
-                onclick="switchPTab('academico', this)">🎓 Datos académicos</button>
+                onclick="switchPTab('academico', this)">Datos académicos</button>
         <% } %>
     </div>
 
@@ -178,7 +180,7 @@
                                value="<%= usuario.getEmail() %>"
                                disabled
                                style="background:var(--uv-gris-100);
-                                      color:var(--uv-gris-500);">
+ color:var(--uv-gris-500);">
                         <div style="font-size:.75rem;color:var(--uv-gris-500);margin-top:4px;">
                             El correo no puede modificarse. Contacta a soporte si necesitas cambiarlo.
                         </div>
@@ -188,13 +190,13 @@
                         <label class="form-label" for="telefono">Teléfono</label>
                         <input type="tel" id="telefono" name="telefono"
                                class="form-control"
-                               value="<%= usuario.getTelefono() != null ? usuario.getTelefono() : "" %>"
+                               value="<%= usuario.getTelefono()!= null? usuario.getTelefono() : "" %>"
                                placeholder="10 dígitos"
                                maxlength="10">
                     </div>
 
                     <button type="submit" class="btn btn-primario">
-                         Guardar cambios
+                        Guardar cambios
                     </button>
                 </form>
             </div>
@@ -239,12 +241,12 @@
                     </div>
 
                     <div class="alert alert-aviso" style="margin-bottom:16px;">
-                         Después de cambiar tu contraseña, se cerrará tu sesión y
+                        Después de cambiar tu contraseña, se cerrará tu sesión y
                         tendrás que volver a iniciarla.
                     </div>
 
                     <button type="submit" class="btn btn-primario">
-                         Cambiar contraseña
+                        Cambiar contraseña
                     </button>
                 </form>
             </div>
@@ -252,10 +254,11 @@
     </div>
 
     <!-- Tab: Tarjetas -->
+    <% if (usuario.getRol() != RolEnum.ADMIN && usuario.getRol() != RolEnum.EMPLEADO) { %>
     <div id="ptab-tarjetas" style="display:none;">
 
-        <div class="alert alert-info" style="margin-bottom:20px;">
-             <strong>Seguridad:</strong> Solo se guardan los últimos 4 dígitos
+    <div class="alert alert-info" style="margin-bottom:20px;">
+            ℹ <strong>Seguridad:</strong>Solo se guardan los últimos 4 dígitos
             de tu tarjeta. Nunca guardamos el número completo ni el CVV.
         </div>
 
@@ -274,12 +277,12 @@
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-bottom:24px;">
             <% for (TarjetaUsuario t : _tarjetas) { %>
             <div style="position:relative;padding:18px;border-radius:14px;
-                        background:linear-gradient(135deg, var(--uv-azul) 0%, var(--uv-azul-dark) 100%);
-                        color:white;box-shadow:var(--sombra-md);">
+ background:linear-gradient(135deg, var(--uv-azul) 0%, var(--uv-azul-dark) 100%);
+ color:white;box-shadow:var(--sombra-md);">
                 <% if (t.isEsPredeterminada()) { %>
                 <span style="position:absolute;top:10px;right:10px;background:var(--uv-amarillo);
-                             color:#000;font-size:.65rem;font-weight:800;padding:3px 8px;
-                             border-radius:10px;">PREDETERMINADA</span>
+ color:#000;font-size:.65rem;font-weight:800;padding:3px 8px;
+ border-radius:10px;">PREDETERMINADA</span>
                 <% } %>
                 <div style="font-size:.7rem;opacity:.7;text-transform:uppercase;letter-spacing:1px;">
                     <%= t.getAlias() %>
@@ -302,8 +305,8 @@
                     <form method="post" action="${pageContext.request.contextPath}/tarjeta/predeterminada" style="display:inline;">
                         <input type="hidden" name="idTarjeta" value="<%= t.getIdTarjeta() %>">
                         <button type="submit" style="background:rgba(255,255,255,.2);border:none;color:white;
-                                                     padding:5px 10px;border-radius:6px;font-size:.75rem;
-                                                     cursor:pointer;">
+ padding:5px 10px;border-radius:6px;font-size:.75rem;
+ cursor:pointer;">
                             Marcar predeterminada
                         </button>
                     </form>
@@ -312,9 +315,9 @@
                           onsubmit="return confirm('¿Eliminar esta tarjeta?');">
                         <input type="hidden" name="idTarjeta" value="<%= t.getIdTarjeta() %>">
                         <button type="submit" style="background:rgba(255,80,80,.5);border:none;color:white;
-                                                     padding:5px 10px;border-radius:6px;font-size:.75rem;
-                                                     cursor:pointer;">
-                            🗑️ Eliminar
+ padding:5px 10px;border-radius:6px;font-size:.75rem;
+ cursor:pointer;">
+                            Eliminar
                         </button>
                     </form>
                 </div>
@@ -343,7 +346,7 @@
                                inputmode="numeric" maxlength="23"
                                oninput="formatearNumero(this)">
                         <div style="font-size:.72rem;color:var(--uv-gris-500);margin-top:4px;">
-                             Solo se guardarán los últimos 4 dígitos. Tu número completo nunca se almacena.
+                            Solo se guardarán los últimos 4 dígitos. Tu número completo nunca se almacena.
                         </div>
                     </div>
 
@@ -379,19 +382,20 @@
                     </div>
 
                     <button type="submit" class="btn btn-primario btn-block">
-                         Guardar tarjeta
+                        Guardar tarjeta
                     </button>
                 </form>
             </div>
         </div>
     </div>
+    <% } %>
 
     <!-- Tab: Beca (solo becados) -->
-    <% if (usuario.getRol() == RolEnum.BECADO && becado != null) { %>
+    <% if (usuario.getRol() == RolEnum.BECADO && becado!= null) { %>
     <div id="ptab-beca" style="display:none;">
         <div class="card" style="max-width:600px;">
             <div class="card-header">
-                <div class="card-title"> Mi Beca Alimentaria</div>
+                <div class="card-title">Mi Beca Alimentaria</div>
             </div>
             <div class="card-body">
 
@@ -400,10 +404,10 @@
                     <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
                         <span style="font-weight:600;">Comidas usadas esta semana</span>
                         <span style="font-family:var(--fuente-display);font-weight:700;
-                                     color:var(--uv-azul);">
-                            <%= becado.getComidasUsadasSemana() %> /
-                            <%= becado.getComidasDisponiblesSemana() %>
-                        </span>
+ color:var(--uv-azul);">
+  <%= becado.getComidasUsadasSemana() %> /
+  <%= becado.getComidasDisponiblesSemana() %>
+  </span>
                     </div>
                     <div class="beca-progress">
                         <%
@@ -415,15 +419,15 @@
                         <div class="beca-progress-fill"
                              style="width:<%= pct %>%;
                                      background:<%= pct >= 100
-                                        ? "var(--uv-rojo)"
-                                        : pct >= 75
-                                            ? "var(--uv-amarillo)"
-                                            : "linear-gradient(90deg,var(--uv-verde),#84cc16)" %>;">
+? "var(--uv-rojo)"
+  : pct >= 75
+? "var(--uv-amarillo)"
+  : "linear-gradient(90deg,var(--uv-verde),#84cc16)" %>;">
                         </div>
                     </div>
                     <div style="font-size:.8rem;color:var(--uv-gris-500);margin-top:6px;">
                         <% if (becado.getComidasRestantesSemana() <= 0) { %>
-                         Has agotado tus comidas de beca esta semana.
+                        Has agotado tus comidas de beca esta semana.
                         El contador se reinicia cada lunes.
                         <% } else { %>
                         Te quedan <strong><%= becado.getComidasRestantesSemana() %></strong>
@@ -435,34 +439,34 @@
                 <!-- Datos de la beca -->
                 <div style="display:grid;gap:12px;">
                     <div style="display:flex;justify-content:space-between;
-                                padding:12px;background:var(--uv-gris-100);
-                                border-radius:var(--radio);">
+ padding:12px;background:var(--uv-gris-100);
+ border-radius:var(--radio);">
                         <span style="color:var(--uv-gris-700);">Tipo de beca</span>
                         <span style="font-weight:600;"><%= becado.getTipoBeca() %></span>
                     </div>
                     <div style="display:flex;justify-content:space-between;
-                                padding:12px;background:var(--uv-gris-100);
-                                border-radius:var(--radio);">
+ padding:12px;background:var(--uv-gris-100);
+ border-radius:var(--radio);">
                         <span style="color:var(--uv-gris-700);">Vigencia</span>
                         <span style="font-weight:600;">
-                            <%= becado.getVigenciaDesde() %> al
-                            <%= becado.getVigenciaHasta() %>
-                        </span>
+  <%= becado.getVigenciaDesde() %>al
+  <%= becado.getVigenciaHasta() %>
+  </span>
                     </div>
                     <div style="display:flex;justify-content:space-between;
-                                padding:12px;background:var(--uv-gris-100);
-                                border-radius:var(--radio);">
+ padding:12px;background:var(--uv-gris-100);
+ border-radius:var(--radio);">
                         <span style="color:var(--uv-gris-700);">Estado</span>
                         <span style="font-weight:600;
                                 color:<%= becado.esBecaVigente()
-                                        ? "var(--uv-verde)" : "var(--uv-rojo)" %>;">
-                            <%= becado.esBecaVigente() ? "✅ Activa" : "❌ Vencida" %>
-                        </span>
+? "var(--uv-verde)" : "var(--uv-rojo)" %>;">
+  <%= becado.esBecaVigente()? " Activa" : " Vencida" %>
+  </span>
                     </div>
                 </div>
 
                 <div class="alert alert-info" style="margin-top:20px;">
-                     La beca cubre el 100% del costo de los platillos del
+                    ℹ La beca cubre el 100% del costo de los platillos del
                     <strong>menú del día</strong>.
                     Los platillos a la carta siempre tienen costo.
                 </div>
@@ -472,41 +476,41 @@
     <% } %>
 
     <!-- Tab: Datos académicos -->
-    <% if (estudiante != null) { %>
+    <% if (estudiante!= null) { %>
     <div id="ptab-academico" style="display:none;">
         <div class="card" style="max-width:600px;">
             <div class="card-header">
-                <div class="card-title"> Datos académicos</div>
+                <div class="card-title">Datos académicos</div>
             </div>
             <div class="card-body">
                 <div style="display:grid;gap:12px;">
                     <div style="display:flex;justify-content:space-between;
-                                padding:12px;background:var(--uv-gris-100);
-                                border-radius:var(--radio);">
+ padding:12px;background:var(--uv-gris-100);
+ border-radius:var(--radio);">
                         <span style="color:var(--uv-gris-700);">Matrícula</span>
                         <span style="font-weight:600;font-family:var(--fuente-display);">
-                            <%= estudiante.getMatricula() %>
-                        </span>
+  <%= estudiante.getMatricula() %>
+  </span>
                     </div>
                     <div style="display:flex;justify-content:space-between;
-                                padding:12px;background:var(--uv-gris-100);
-                                border-radius:var(--radio);">
+ padding:12px;background:var(--uv-gris-100);
+ border-radius:var(--radio);">
                         <span style="color:var(--uv-gris-700);">Carrera</span>
                         <span style="font-weight:600;">
-                            <%= estudiante.getCarrera() %>
-                        </span>
+  <%= estudiante.getCarrera() %>
+  </span>
                     </div>
                     <div style="display:flex;justify-content:space-between;
-                                padding:12px;background:var(--uv-gris-100);
-                                border-radius:var(--radio);">
+ padding:12px;background:var(--uv-gris-100);
+ border-radius:var(--radio);">
                         <span style="color:var(--uv-gris-700);">Semestre</span>
                         <span style="font-weight:600;">
-                            <%= estudiante.getSemestre() %>°
-                        </span>
+  <%= estudiante.getSemestre() %>°
+  </span>
                     </div>
                 </div>
                 <div class="alert alert-info" style="margin-top:20px;">
-                     Para actualizar tus datos académicos contacta
+                    ℹ Para actualizar tus datos académicos contacta
                     a la administración del comedor.
                 </div>
             </div>
@@ -521,9 +525,9 @@
 <script>
     function switchPTab(tab, btn) {
         document.querySelectorAll('[id^="ptab-"]')
-            .forEach(el => el.style.display = 'none');
+            .forEach(el =>el.style.display = 'none');
         document.querySelectorAll('.perfil-tab')
-            .forEach(b => b.classList.remove('activo'));
+            .forEach(b =>b.classList.remove('activo'));
         const panel = document.getElementById('ptab-' + tab);
         if (panel) panel.style.display = 'block';
         btn.classList.add('activo');
@@ -537,17 +541,17 @@
             msg.textContent = ' Mínimo 8 caracteres';
         } else if (!/[A-Z]/.test(input.value)) {
             msg.style.color = 'var(--uv-amarillo)';
-            msg.textContent = 'Agrega al menos una mayúscula';
+            msg.textContent = ' Agrega al menos una mayúscula';
         } else {
             msg.style.color = 'var(--uv-verde)';
-            msg.textContent = 'Contraseña segura';
+            msg.textContent = ' Contraseña segura';
         }
     }
 
     function validarCambioPass() {
-        const nueva    = document.getElementById('passNueva').value;
+        const nueva  = document.getElementById('passNueva').value;
         const confirmar = document.getElementById('passConfirmar').value;
-        if (nueva !== confirmar) {
+        if (nueva!== confirmar) {
             alert('Las contraseñas no coinciden');
             return false;
         }
@@ -568,7 +572,7 @@
         input.value = formatted;
     }
 
-    // Activar la tab según el parámetro ?tab=X de la URL
+    // Activar la tab según el parámetro?tab=X de la URL
     (function() {
         const params = new URLSearchParams(window.location.search);
         const tab = params.get('tab');

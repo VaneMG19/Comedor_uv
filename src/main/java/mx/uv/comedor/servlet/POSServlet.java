@@ -8,17 +8,23 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
-import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /*
   Punto de Venta para el empleado del comedor.
+  Al cobrar, el pedido se crea como PENDIENTE (igual que un pedido online).
+  El empleado de cocina lo prepara y luego se entrega. El inventario se
+  descuenta en EmpleadoServlet cuando se marca como ENTREGADO.
 
   GET  /pos                 vista del POS
- POST /pos/buscar-usuario  busca un usuario por email/matricula (AJAX)
+  POST /pos/buscar-usuario  busca un usuario por email/matricula (AJAX)
   POST /pos/cobrar          registra la venta
  */
 @WebServlet(urlPatterns = { "/pos", "/pos/buscar-usuario", "/pos/cobrar" })
@@ -29,7 +35,8 @@ public class POSServlet extends HttpServlet {
     private final EstudianteDAO     estDAO        = new EstudianteDAO();
     private final AlumnoBecadoDAO   becadoDAO     = new AlumnoBecadoDAO();
     private final PedidoDAO         pedidoDAO     = new PedidoDAO();
-    private final EmpleadoCocinaDAO empleadoDAO   = new EmpleadoCocinaDAO();
+    private final RecetaDAO         recetaDAO     = new RecetaDAO();
+    private final MenuSemanalDAO menuDAO = new MenuSemanalDAO();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -47,19 +54,18 @@ public class POSServlet extends HttpServlet {
         }
 
         try {
-            // Cargar todos los platillos disponibles
-            List<Platillo> todos = platilloDAO.listarTodos();
-            List<Platillo> menuDia = new java.util.ArrayList<>();
-            List<Platillo> aLaCarta = new java.util.ArrayList<>();
-            for (Platillo p : todos) {
-                if (!p.isDisponible()) continue;
-                if (p.getTipo() == TipoPlatEnum.MENU)        menuDia.add(p);
-                else if (p.getTipo() == TipoPlatEnum.CARTA)  aLaCarta.add(p);
-            }
+            // MENU DEL DIA: solo los platillos del dia actual (desayuno + comida)
+            List<Platillo> menuDia = new ArrayList<>();
+            menuDia.addAll(platilloDAO.listarPorMenuActivoYCategoria(CatMenuEnum.DESAYUNO));
+            menuDia.addAll(platilloDAO.listarPorMenuActivoYCategoria(CatMenuEnum.COMIDA));
+
+            // A LA CARTA: todos los platillos tipo carta disponibles
+            List<Platillo> aLaCarta = platilloDAO.listarCarta();
+
             req.setAttribute("menuDia", menuDia);
             req.setAttribute("aLaCarta", aLaCarta);
             req.getRequestDispatcher("/WEB-INF/vistas/empleado/pos.jsp")
-               .forward(req, resp);
+                    .forward(req, resp);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -98,14 +104,15 @@ public class POSServlet extends HttpServlet {
             responderJSON(resp, "{\"found\":false}");
             return;
         }
-        texto = texto.trim().toLowerCase();
+        // NO convertir a lowercase para matricula; el DAO ya hace LOWER() en ambos lados.
+        // Para email, lowercase es seguro (los emails se guardan en lowercase).
+        texto = texto.trim();
 
         try {
             Usuario u = null;
             if (texto.contains("@")) {
-                u = usuarioDAO.buscarPorEmail(texto);
+                u = usuarioDAO.buscarPorEmail(texto.toLowerCase());
             } else {
-                // Buscar por matrícula
                 Estudiante est = estDAO.buscarPorMatricula(texto);
                 if (est != null) {
                     u = usuarioDAO.buscarPorId(est.getIdUsuario());
@@ -132,15 +139,15 @@ public class POSServlet extends HttpServlet {
             }
 
             String json = "{"
-                + "\"found\":true,"
-                + "\"idUsuario\":" + u.getIdUsuario() + ","
-                + "\"nombre\":\"" + esc(u.getNombreCompleto()) + "\","
-                + "\"email\":\"" + esc(u.getEmail()) + "\","
-                + "\"rol\":\"" + u.getRol().name() + "\","
-                + "\"esBecado\":" + esBecado + ","
-                + "\"comidasBeca\":" + comidasBeca + ","
-                + "\"tipoBeca\":\"" + esc(tipoBeca) + "\""
-                + "}";
+                    + "\"found\":true,"
+                    + "\"idUsuario\":" + u.getIdUsuario() + ","
+                    + "\"nombre\":\"" + esc(u.getNombreCompleto()) + "\","
+                    + "\"email\":\"" + esc(u.getEmail()) + "\","
+                    + "\"rol\":\"" + u.getRol().name() + "\","
+                    + "\"esBecado\":" + esBecado + ","
+                    + "\"comidasBeca\":" + comidasBeca + ","
+                    + "\"tipoBeca\":\"" + esc(tipoBeca) + "\""
+                    + "}";
             responderJSON(resp, json);
 
         } catch (SQLException e) {
@@ -149,12 +156,17 @@ public class POSServlet extends HttpServlet {
         }
     }
 
-    /** Procesa la venta. Crea un Pedido tipo INMEDIATO ya ENTREGADO. */
+    /**
+     * Procesa la venta. Crea un Pedido tipo INMEDIATO con estado PENDIENTE
+     * para que aparezca en Pedidos Activos y el empleado de cocina lo
+     * prepare. El descuento de inventario ocurrira cuando se marque como
+     * ENTREGADO en el panel del empleado.
+     */
     private void cobrar(HttpServletRequest req, HttpServletResponse resp, Usuario empleado)
             throws IOException {
 
         try {
-            String idUsuarioStr = req.getParameter("idUsuario");  // puede ser null (venta sin asociar)
+            String idUsuarioStr = req.getParameter("idUsuario");
             String metodoPago   = req.getParameter("metodoPago");
             String[] platillos  = req.getParameterValues("platilloId");
             String[] cantidades = req.getParameterValues("cantidad");
@@ -164,7 +176,6 @@ public class POSServlet extends HttpServlet {
                 return;
             }
 
-            // Si hay usuario asociado, lo cargamos
             Long idUsuarioCompra = null;
             AlumnoBecado becado = null;
             if (idUsuarioStr != null && !idUsuarioStr.isBlank()) {
@@ -177,11 +188,29 @@ public class POSServlet extends HttpServlet {
                     }
                 }
             } else {
-                // Venta anónima — asociar al empleado mismo (registro de la venta)
                 idUsuarioCompra = empleado.getIdUsuario();
             }
 
-            // Construir pedido
+            // 1) Construir mapa idPlatillo -> cantidad
+            Map<Long, Integer> platillosCantidad = new HashMap<>();
+            for (int i = 0; i < platillos.length; i++) {
+                Long idPlat = Long.parseLong(platillos[i]);
+                int cant = 1;
+                if (cantidades != null && i < cantidades.length) {
+                    try { cant = Integer.parseInt(cantidades[i]); } catch (Exception e) {}
+                }
+                platillosCantidad.merge(idPlat, cant, Integer::sum);
+            }
+
+            // 2) Verificar stock ANTES de crear el pedido
+            List<String> faltantes = recetaDAO.verificarStockSuficiente(platillosCantidad);
+            if (!faltantes.isEmpty()) {
+                resp.sendRedirect(req.getContextPath()
+                        + "/pos?error=Sin stock: " + String.join("; ", faltantes));
+                return;
+            }
+
+            // 3) Construir el pedido (queda como PENDIENTE por defecto)
             Pedido pedido = new Pedido(idUsuarioCompra, TipoPedidoEnum.INMEDIATO);
 
             for (int i = 0; i < platillos.length; i++) {
@@ -194,7 +223,7 @@ public class POSServlet extends HttpServlet {
                 if (p == null) continue;
 
                 RolEnum rolCompra = becado != null ? RolEnum.BECADO
-                    : (idUsuarioStr != null && !idUsuarioStr.isBlank()
+                        : (idUsuarioStr != null && !idUsuarioStr.isBlank()
                         ? usuarioDAO.buscarPorId(idUsuarioCompra).getRol()
                         : RolEnum.EMPLEADO);
                 BigDecimal precio = p.calcularPrecioFinal(rolCompra);
@@ -205,18 +234,37 @@ public class POSServlet extends HttpServlet {
 
             MetodoPagoEnum mp = MetodoPagoEnum.valueOf(metodoPago != null ? metodoPago : "EFECTIVO");
 
-            // Crear el pedido completo
+            // Verificar y descontar cupo del menu del dia
+            DiaEnum diaHoy = DiaEnum.desdeDayOfWeek(java.time.LocalDate.now().getDayOfWeek());
+
+            for (DetallePedido det : pedido.getDetalles()) {
+                Platillo p = platilloDAO.buscarPorId(det.getIdPlatillo());
+                if (p == null) continue;
+                if (p.getTipo() == TipoPlatEnum.MENU) {
+                    boolean ok = menuDAO.incrementarVendidos(
+                            det.getIdPlatillo(), diaHoy, CatMenuEnum.DESAYUNO, det.getCantidad());
+                    if (!ok) {
+                        ok = menuDAO.incrementarVendidos(
+                                det.getIdPlatillo(), diaHoy, CatMenuEnum.COMIDA, det.getCantidad());
+                    }
+                    if (!ok) {
+                        resp.sendRedirect(req.getContextPath()
+                                + "/pos?error=El platillo \"" + p.getNombre()
+                                + "\" se agoto");
+                        return;
+                    }
+                }
+            }
+
+
+            // 4) Crear el pedido. El estado queda PENDIENTE (default del modelo).
+            // No descontamos inventario aqui - se descuenta cuando el empleado lo
+            // marca como ENTREGADO desde su panel.
             pedidoDAO.crearPedidoCompleto(pedido, mp, becado);
 
-            // Marcarlo como ENTREGADO (porque el empleado vende y entrega al instante)
-            EmpleadoCocina empCocina = empleadoDAO.buscarPorIdUsuario(empleado.getIdUsuario());
-            Long idEmpCocina = empCocina != null ? empCocina.getIdEmpleado() : null;
-            pedidoDAO.cambiarEstado(pedido.getIdPedido(),
-                EstadoPedidoEnum.ENTREGADO, idEmpCocina, "Venta en POS");
-
-            // Redirigir a la página de ticket
+            // 5) Redirigir al ticket
             resp.sendRedirect(req.getContextPath()
-                + "/pos/ticket?id=" + pedido.getIdPedido());
+                    + "/pos/ticket?id=" + pedido.getIdPedido());
 
         } catch (Exception e) {
             e.printStackTrace();

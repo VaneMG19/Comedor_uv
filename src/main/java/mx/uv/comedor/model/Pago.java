@@ -5,9 +5,9 @@ import java.time.LocalDateTime;
 
 /*
   Un pago por pedido.
-  - EFECTIVO / TARJETA → estudiante o docente paga todo
-  - BECA               → becado, solo platillos tipo=MENU gratis
-  - MIXTO              → becado con menú (beca) + carta (efectivo/tarjeta)
+  - EFECTIVO / TARJETA  estudiante o docente paga
+  - BECA                becado, solo platillos tipo=MENU gratis
+  - MIXTO               becado con menú (beca) + carta (efectivo/tarjeta)
  */
 public class Pago {
 

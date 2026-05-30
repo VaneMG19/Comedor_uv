@@ -100,35 +100,47 @@ public class PlatilloDAO {
      */
     public List<Platillo> listarPorMenuActivoYCategoria(CatMenuEnum categoria)
             throws SQLException {
+        DiaEnum diaHoy = DiaEnum.desdeDayOfWeek(
+                java.time.LocalDate.now().getDayOfWeek());
 
-        // Calcular el día actual en español para el ENUM de PostgreSQL
-        String[] dias = {"LUNES","MARTES","MIERCOLES","JUEVES","VIERNES","LUNES","LUNES"};
-        int dow = java.time.LocalDate.now().getDayOfWeek().getValue(); // 1=Lun, 7=Dom
-        String diaHoy = dow <= 5 ? dias[dow - 1] : "LUNES";
-
-        String sql = "SELECT p.id_platillo, p.nombre, p.descripcion, p.precio, " +
-                "p.precio_subsidiado, p.imagen, p.disponible, p.tipo, p.categoria, p.tiempo_prep, " +
-                "n.id_nutricional, n.calorias, n.proteinas, n.carbohidratos, n.grasas, " +
-                "n.fibra, n.sodio, n.azucar, n.alergenos, n.es_vegetariano, n.es_vegano, " +
-                "n.es_gluten_free, n.huella_carbono_kg, n.nivel_huella " +
-                "FROM vista_menu_del_dia v " +
-                "JOIN platillo p ON v.id_platillo = p.id_platillo " +
-                "LEFT JOIN informacion_nutricional n ON p.id_platillo = n.id_platillo " +
-                "WHERE v.categoria = CAST(? AS cat_menu_enum) " +
-                "AND v.dia_semana  = CAST(? AS dia_enum) " +
-                "AND p.disponible = true";
+        String sql =
+                "SELECT p.id_platillo, p.nombre, p.descripcion, p.precio, " +
+                        "       p.precio_subsidiado, p.imagen, p.disponible, p.tipo, " +
+                        "       p.categoria, p.tiempo_prep, " +
+                        "       dmp.cantidad AS cupo, dmp.vendidos, " +
+                        "       n.id_nutricional, n.calorias, n.proteinas, n.carbohidratos, " +
+                        "       n.grasas, n.fibra, n.sodio, n.azucar, n.alergenos, " +
+                        "       n.es_vegetariano, n.es_vegano, n.es_gluten_free, " +
+                        "       n.huella_carbono_kg, n.nivel_huella " +
+                        "FROM dia_menu_platillo dmp " +
+                        "JOIN dia_menu          dm ON dmp.id_dia_menu = dm.id_dia_menu " +
+                        "JOIN menu_semanal      ms ON dm.id_menu      = ms.id_menu " +
+                        "JOIN platillo          p  ON dmp.id_platillo = p.id_platillo " +
+                        "LEFT JOIN informacion_nutricional n ON p.id_platillo = n.id_platillo " +
+                        "WHERE dmp.categoria = CAST(? AS cat_menu_enum) " +
+                        "AND   dm.dia_semana = CAST(? AS dia_enum) " +
+                        "AND   ms.activo     = true " +
+                        "AND   p.disponible  = true " +
+                        "AND   CURRENT_DATE BETWEEN ms.fecha_inicio AND ms.fecha_fin " +
+                        "ORDER BY p.nombre";
 
         List<Platillo> lista = new ArrayList<>();
         try (Connection con = DBConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
-
             ps.setString(1, categoria.name());
-            ps.setString(2, diaHoy);
+            ps.setString(2, diaHoy.name());
             ResultSet rs = ps.executeQuery();
-            while (rs.next()) lista.add(mapearPlatilloConNutricion(rs));
+            while (rs.next()) {
+                Platillo p = mapearPlatilloConNutricion(rs);
+                p.setCupo(rs.getInt("cupo"));
+                p.setVendidos(rs.getInt("vendidos"));
+                lista.add(p);
+            }
         }
         return lista;
     }
+
+
 
     public List<Platillo> listarCarta() throws SQLException {
         String sql = "SELECT p.*, " +
@@ -308,7 +320,7 @@ public class PlatilloDAO {
                 p.setInformacionNutricional(n);
             }
         } catch (SQLException ex) {
-            // La columna id_nutricional no está en esta vista, ignorar
+
         }
         return p;
     }

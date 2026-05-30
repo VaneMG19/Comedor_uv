@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 /*
   Una calificación de 1-5 estrellas dejada por un usuario
  después de recibir un pedido ENTREGADO.
-  Un pedido solo puede tener una calificación (UNIQUE id_pedido).
+  Un pedido solo puede tener una calificación
  */
 public class Calificacion {
 

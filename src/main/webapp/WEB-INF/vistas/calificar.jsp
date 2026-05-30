@@ -11,7 +11,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>Calificar Pedido — Comedor UV</title>
+    <title>Calificar Pedido - Comedor UV</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
     <style>
         .platillo-rating-card {
@@ -36,7 +36,7 @@
             font-size: 2.2rem;
             cursor: pointer;
             color: var(--uv-gris-300);
-            transition: color .15s;
+            transition: color.15s;
             line-height: 1;
         }
         .estrellas-input label:hover,
@@ -50,9 +50,9 @@
             font-size: 1.1rem;
             margin-bottom: 6px;
         }
-        .platillo-rating-card .desc {
+        .platillo-rating-card.desc {
             color: var(--uv-gris-500);
-            font-size: .85rem;
+            font-size:.85rem;
             margin-bottom: 12px;
         }
     </style>
@@ -65,13 +65,13 @@
 
     <div style="margin-bottom:12px;">
         <a href="${pageContext.request.contextPath}/pedido/detalle?id=<%= pedido.getIdPedido() %>"
-           style="font-size:.85rem;color:var(--uv-gris-500);">← Volver al pedido</a>
+           style="font-size:.85rem;color:var(--uv-gris-500);">Volver al pedido</a>
     </div>
 
     <div class="page-header">
         <div class="page-title">Califica tu pedido ⭐</div>
         <div class="page-subtitle">
-            Pedido <strong><%= pedido.getFolio() %></strong> —
+            Pedido <strong><%= pedido.getFolio() %></strong> -
             Cuéntanos qué te pareció cada platillo
         </div>
     </div>
@@ -82,21 +82,21 @@
         <%
             int idx = 0;
             boolean hayAlgo = false;
-            if (pedido.getDetalles() != null) {
+            if (pedido.getDetalles()!= null) {
                 for (DetallePedido d : pedido.getDetalles()) {
                     // CRÍTICO: validar que el platillo exista
                     if (d.getIdPlatillo() == null || d.getIdPlatillo() <= 0) continue;
                     hayAlgo = true;
                     idx++;
-                    String nombre = (d.getPlatillo() != null && d.getPlatillo().getNombre() != null)
-                        ? d.getPlatillo().getNombre()
-                        : "Platillo #" + d.getIdPlatillo();
-                    String descripcion = (d.getPlatillo() != null) ? d.getPlatillo().getDescripcion() : null;
+                    String nombre = (d.getPlatillo()!= null && d.getPlatillo().getNombre()!= null)
+                            ? d.getPlatillo().getNombre()
+                            : "Platillo #" + d.getIdPlatillo();
+                    String descripcion = (d.getPlatillo()!= null)? d.getPlatillo().getDescripcion() : null;
                     Long idP = d.getIdPlatillo();
         %>
         <div class="platillo-rating-card">
             <h3> <%= nombre %></h3>
-            <% if (descripcion != null && !descripcion.isBlank()) { %>
+            <% if (descripcion!= null &&!descripcion.isBlank()) { %>
             <div class="desc"><%= descripcion %></div>
             <% } %>
 

@@ -178,6 +178,26 @@ public class InventarioDAO {
         return lista;
     }
 
+    /**
+     * Lista los ultimos 100 movimientos de TODOS los ingredientes.
+     */
+    public List<MovimientoInventario> listarTodosMovimientos() throws SQLException {
+        String sql = "SELECT id_mov, id_ingrediente, id_usuario, tipo, " +
+                "       cantidad, stock_resultante, motivo, fecha " +
+                "FROM movimiento_inventario " +
+                "ORDER BY fecha DESC " +
+                "LIMIT 100";
+
+        List<MovimientoInventario> lista = new ArrayList<>();
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) lista.add(mapearMovimiento(rs));
+        }
+        return lista;
+    }
+
+
     //  COMPRA ANTICIPADA
 
     /*

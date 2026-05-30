@@ -2,7 +2,7 @@
 <%@ page import="mx.uv.comedor.model.Usuario" %>
 <%
     Usuario _u = (Usuario) session.getAttribute("usuario");
-    if (_u != null) { response.sendRedirect(request.getContextPath() + "/menu"); return; }
+    if (_u!= null) { response.sendRedirect(request.getContextPath() + "/menu"); return; }
     String error = (String) request.getAttribute("error");
     String exito = (String) request.getAttribute("exito");
 %>
@@ -11,7 +11,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro — Comedor UV</title>
+    <title>Registro - Comedor UV</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
     <style>
         body { background: var(--uv-azul); min-height: 100vh; display: flex;
@@ -41,39 +41,39 @@
         }
         .brand-logo-text { color: white; font-family: var(--fuente-display); }
         .brand-logo-text h1 { font-size: 1rem; font-weight: 700; }
-        .brand-logo-text p  { font-size: .72rem; opacity: .75; }
+        .brand-logo-text p  { font-size:.72rem; opacity:.75; }
         .brand-info { position: relative; z-index: 1; color: white; }
         .brand-info h2 {
             font-family: var(--fuente-display); font-size: 1.3rem;
             font-weight: 800; margin-bottom: 10px; line-height: 1.25;
         }
-        .brand-info p { font-size: .82rem; opacity: .8; line-height: 1.6; }
+        .brand-info p { font-size:.82rem; opacity:.8; line-height: 1.6; }
         .brand-roles { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 8px; }
         .brand-role {
             display: flex; align-items: center; gap: 10px;
             background: rgba(255,255,255,.1); border-radius: 10px;
-            padding: 10px 12px; color: white; font-size: .78rem;
+            padding: 10px 12px; color: white; font-size:.78rem;
         }
-        .brand-role .icon { font-size: 1.2rem; flex-shrink: 0; }
+        .brand-role.icon { font-size: 1.2rem; flex-shrink: 0; }
         .registro-form-panel { flex: 1; background: white; padding: 36px 40px;
             overflow-y: auto; max-height: 92vh; }
         .registro-title {
             font-family: var(--fuente-display); font-size: 1.5rem;
             font-weight: 800; color: var(--uv-gris-900); margin-bottom: 4px;
         }
-        .registro-subtitle { color: var(--uv-gris-500); font-size: .875rem; margin-bottom: 24px; }
+        .registro-subtitle { color: var(--uv-gris-500); font-size:.875rem; margin-bottom: 24px; }
         .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
         .input-icon-wrapper { position: relative; }
-        .input-icon-wrapper .form-control { padding-left: 42px; }
+        .input-icon-wrapper.form-control { padding-left: 42px; }
         .input-icon {
             position: absolute; left: 14px; top: 50%;
             transform: translateY(-50%); font-size: 1rem; pointer-events: none;
         }
-        .form-control.valido   { border-color: var(--uv-verde); }
+        .form-control.valido  { border-color: var(--uv-verde); }
         .form-control.invalido { border-color: var(--uv-rojo);  }
-        .campo-mensaje { font-size: .75rem; margin-top: 5px; display: none; }
+        .campo-mensaje { font-size:.75rem; margin-top: 5px; display: none; }
         .campo-mensaje.visible { display: block; }
-        .campo-mensaje.ok    { color: var(--uv-verde); }
+        .campo-mensaje.ok  { color: var(--uv-verde); }
         .campo-mensaje.error { color: var(--uv-rojo);  }
         .roles-grid {
             display: grid;
@@ -87,10 +87,10 @@
             display: flex; flex-direction: column; align-items: center; gap: 4px;
             padding: 12px 8px; border: 2px solid var(--color-borde);
             border-radius: var(--radio); cursor: pointer; text-align: center;
-            transition: all var(--trans-rapida); font-size: .75rem;
+            transition: all var(--trans-rapida); font-size:.75rem;
             font-weight: 600; color: var(--uv-gris-700);
         }
-        .rol-opcion label .rol-icon { font-size: 1.4rem; }
+        .rol-opcion label.rol-icon { font-size: 1.4rem; }
         .rol-opcion input:checked + label {
             border-color: var(--uv-azul); background: var(--uv-azul-light); color: var(--uv-azul);
         }
@@ -106,7 +106,7 @@
             padding: 12px 14px;
             border-radius: 8px;
             margin-bottom: 14px;
-            font-size: .82rem;
+            font-size:.82rem;
             color: var(--uv-verde-dark);
         }
         .password-strength { margin-top: 6px; display: none; }
@@ -114,10 +114,10 @@
         .strength-bar { height: 4px; background: var(--uv-gris-300);
             border-radius: 2px; overflow: hidden; margin-bottom: 4px; }
         .strength-fill { height: 100%; border-radius: 2px;
-            transition: width .3s, background .3s; }
-        .strength-text { font-size: .72rem; }
+            transition: width.3s, background.3s; }
+        .strength-text { font-size:.72rem; }
         .login-link { text-align: center; margin-top: 20px;
-            font-size: .85rem; color: var(--uv-gris-500); }
+            font-size:.85rem; color: var(--uv-gris-500); }
         .login-link a { color: var(--uv-azul); font-weight: 600; }
         @media (max-width: 700px) {
             .registro-branding { display: none; }
@@ -144,22 +144,22 @@
             <p>Accede al comedor con tu correo institucional de la UV.</p>
         </div>
         <div class="brand-roles">
-            <div class="brand-role"><span class="icon"></span><span>Estudiantes — pedidos</span></div>
-            <div class="brand-role"><span class="icon"></span><span>Becados — calendario de comidas</span></div>
-            <div class="brand-role"><span class="icon"></span><span>Docentes — pedidos y pago</span></div>
+            <div class="brand-role"><span class="icon"></span><span>Estudiantes - pedidos</span></div>
+            <div class="brand-role"><span class="icon"></span><span>Becados - calendario de comidas</span></div>
+            <div class="brand-role"><span class="icon"></span><span>Docentes - pedidos y pago</span></div>
         </div>
     </div>
 
     <div class="registro-form-panel">
-        <div class="registro-title">Crear cuenta 🎓</div>
+        <div class="registro-title">Crear cuenta </div>
         <div class="registro-subtitle">
-            Solo se aceptan correos <strong>@uv.mx</strong> o <strong>@estudiantes.uv.mx</strong>
+            Solo se aceptan correos <strong>@uv.mx</strong>o <strong>@estudiantes.uv.mx</strong>
         </div>
 
-        <% if (error != null) { %>
+        <% if (error!= null) { %>
         <div class="alert alert-error" data-auto-close> <%= error %></div>
         <% } %>
-        <% if (exito != null) { %>
+        <% if (exito!= null) { %>
         <div class="alert alert-exito"> <%= exito %></div>
         <% } %>
 
@@ -217,8 +217,8 @@
                                oninput="validarPassword(this)">
                         <button type="button" onclick="togglePass('password')"
                                 style="position:absolute;right:10px;top:50%;
-                                       transform:translateY(-50%);border:none;
-                                       background:none;cursor:pointer;"></button>
+ transform:translateY(-50%);border:none;
+ background:none;cursor:pointer;"></button>
                     </div>
                     <div class="password-strength" id="strength-bar">
                         <div class="strength-bar"><div class="strength-fill" id="strength-fill"></div></div>
@@ -234,8 +234,8 @@
                                oninput="validarConfirmacion(this)">
                         <button type="button" onclick="togglePass('confirmarPassword')"
                                 style="position:absolute;right:10px;top:50%;
-                                       transform:translateY(-50%);border:none;
-                                       background:none;cursor:pointer;"></button>
+ transform:translateY(-50%);border:none;
+ background:none;cursor:pointer;"></button>
                     </div>
                     <div class="campo-mensaje" id="msg-confirmar"></div>
                 </div>
@@ -302,7 +302,7 @@
             <!-- Campos BECADO -->
             <div class="campos-rol" id="campos-BECADO">
                 <div class="info-becado">
-                     <strong>Beca alimentaria</strong> — Tu correo debe estar en la lista
+                    <strong>Beca alimentaria</strong> - Tu correo debe estar en la lista
                     de becados autorizados por la universidad. Si tu beca está aprobada
                     pero tu correo no aparece, contacta a la administración del comedor.
                 </div>
@@ -365,7 +365,7 @@
 
             <div class="form-group" style="margin-top:16px;">
                 <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;
-                              font-size:.85rem;color:var(--uv-gris-700);">
+ font-size:.85rem;color:var(--uv-gris-700);">
                     <input type="checkbox" id="terminos" required style="margin-top:3px;flex-shrink:0;">
                     Acepto que mis datos sean utilizados para la gestión de pedidos del Comedor UV.
                 </label>
@@ -373,7 +373,7 @@
 
             <button type="submit" id="btn-registro"
                     class="btn btn-primario btn-block btn-lg" style="margin-top:8px;">
-                Crear mi cuenta →
+                Crear mi cuenta
             </button>
         </form>
 
@@ -390,7 +390,7 @@
     function validarEmail(input) {
         const val = input.value.trim().toLowerCase();
         const msg = document.getElementById('msg-email');
-        const esUV = DOMINIOS_UV.some(d => val.endsWith(d));
+        const esUV = DOMINIOS_UV.some(d =>val.endsWith(d));
         const esEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
         msg.classList.add('visible');
         if (!val) setEstado(input, msg, null, '');
@@ -406,17 +406,17 @@
         const txt  = document.getElementById('strength-text');
         bar.classList.add('visible');
         let puntos = 0;
-        if (val.length >= 8)            puntos++;
-        if (val.length >= 12)           puntos++;
-        if (/[A-Z]/.test(val))          puntos++;
-        if (/[0-9]/.test(val))          puntos++;
-        if (/[^A-Za-z0-9]/.test(val))   puntos++;
+        if (val.length >= 8) puntos++;
+        if (val.length >= 12) puntos++;
+        if (/[A-Z]/.test(val)) puntos++;
+        if (/[0-9]/.test(val)) puntos++;
+        if (/[^A-Za-z0-9]/.test(val)) puntos++;
         const niveles = [
-            { w:'20%', bg:'var(--uv-rojo)',    t:'Muy débil' },
-            { w:'40%', bg:'#f97316',           t:'Débil' },
+            { w:'20%', bg:'var(--uv-rojo)', t:'Muy débil' },
+            { w:'40%', bg:'#f97316', t:'Débil' },
             { w:'60%', bg:'var(--uv-amarillo)',t:'Regular' },
-            { w:'80%', bg:'#84cc16',           t:'Buena' },
-            { w:'100%',bg:'var(--uv-verde)',   t:'Excelente' }
+            { w:'80%', bg:'#84cc16', t:'Buena' },
+            { w:'100%',bg:'var(--uv-verde)', t:'Excelente' }
         ];
         const nivel = niveles[Math.min(puntos, 4)];
         fill.style.width = nivel.w;
@@ -440,25 +440,25 @@
     function setEstado(input, msgEl, ok, texto) {
         input.classList.remove('valido', 'invalido');
         msgEl.classList.remove('ok', 'error');
-        if (ok === true)  { input.classList.add('valido');   msgEl.classList.add('ok'); }
+        if (ok === true)  { input.classList.add('valido'); msgEl.classList.add('ok'); }
         if (ok === false) { input.classList.add('invalido'); msgEl.classList.add('error'); }
         msgEl.textContent = texto;
     }
 
     function togglePass(id) {
         const input = document.getElementById(id);
-        input.type = input.type === 'password' ? 'text' : 'password';
+        input.type = input.type === 'password'? 'text' : 'password';
     }
 
     function mostrarCamposRol(rol) {
-        document.querySelectorAll('.campos-rol').forEach(el => el.classList.remove('visible'));
+        document.querySelectorAll('.campos-rol').forEach(el =>el.classList.remove('visible'));
         document.getElementById('campos-' + rol)?.classList.add('visible');
 
         // Habilitar/deshabilitar campos según rol activo
-        const allFields = document.querySelectorAll('.campos-rol input, .campos-rol select');
-        allFields.forEach(f => f.disabled = true);
+        const allFields = document.querySelectorAll('.campos-rol input,.campos-rol select');
+        allFields.forEach(f =>f.disabled = true);
         document.querySelectorAll('#campos-' + rol + ' input, #campos-' + rol + ' select')
-            .forEach(f => f.disabled = false);
+            .forEach(f =>f.disabled = false);
     }
 
     // Inicializar
@@ -466,13 +466,13 @@
 
     function validarFormulario() {
         const email = document.getElementById('email').value.trim().toLowerCase();
-        if (!DOMINIOS_UV.some(d => email.endsWith(d))) {
+        if (!DOMINIOS_UV.some(d =>email.endsWith(d))) {
             alert('Solo se aceptan correos @uv.mx o @estudiantes.uv.mx');
             return false;
         }
         const pass = document.getElementById('password').value;
         const conf = document.getElementById('confirmarPassword').value;
-        if (pass !== conf) { alert('Las contraseñas no coinciden'); return false; }
+        if (pass!== conf) { alert('Las contraseñas no coinciden'); return false; }
         if (pass.length < 8) { alert('Mínimo 8 caracteres'); return false; }
         const btn = document.getElementById('btn-registro');
         btn.disabled = true;

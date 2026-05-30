@@ -360,7 +360,7 @@ public class PedidoDAO {
       MODIFICADO: ahora carga el objeto Platillo completo para que el JSP
       y el PDF puedan mostrar el nombre real.
      */
-    private List<DetallePedido> obtenerDetalles(Long idPedido) throws SQLException {
+    public List<DetallePedido> obtenerDetalles(Long idPedido) throws SQLException {
         String sql = """
             SELECT d.id_detalle, d.id_pedido, d.id_platillo, d.cantidad,
                    d.precio_unitario, d.subtotal, d.cubierto_por_beca,

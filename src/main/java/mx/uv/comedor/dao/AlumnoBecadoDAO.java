@@ -38,7 +38,7 @@ public class AlumnoBecadoDAO {
         }
     }
 
-    // ── READ
+    //  READ
 
     public AlumnoBecado buscarPorId(Long idBecado) throws SQLException {
         String sql = """
@@ -82,7 +82,7 @@ public class AlumnoBecadoDAO {
         }
     }
 
-    // ── UPDATE
+    //  UPDATE
 
     /*
      Incrementa las comidas usadas esta semana en 1.

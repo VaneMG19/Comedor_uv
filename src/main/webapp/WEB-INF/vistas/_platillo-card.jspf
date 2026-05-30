@@ -1,24 +1,30 @@
-<%-- Fragmento reutilizable de tarjeta de platillo (carrito) --%>
-<div class="platillo-card"
-     data-nombre="<%= p.getNombre() %>"
-     data-precio="<%= p.getPrecio().toPlainString() %>"
-     data-categoria="<%= p.getCategoria() != null ? p.getCategoria().name() : "OTRO" %>"
-     onclick="abrirPlatillo(<%= p.getIdPlatillo() %>,
-        '<%= escapeJS(p.getNombre()) %>',
-        '<%= escapeJS(p.getDescripcion() != null ? p.getDescripcion() : "") %>',
-        '<%= precioFinal %>',
-        <%= p.getTiempoPrep() %>,
-        '<%= p.getImagen() != null ? p.getImagen() : "" %>',
-        <%= cubiertoXBeca %>,
-        <%= p.getInformacionNutricional() != null ? buildNutriJSON(p.getInformacionNutricional()) : "null" %>
-     )">
+<%
+    // _platillo-card.jspf
 
-    <% if (p.getTipo() == TipoPlatEnum.MENU) { %>
-    <span class="platillo-badge menu">Menú del día</span>
-    <% } else { %>
-    <span class="platillo-badge carta">A la carta</span>
+    boolean _agotado = p.isAgotado() || !p.isDisponible();
+%>
+<div class="platillo-card <%= _agotado ? "platillo-agotado" : "" %>"
+        <% if (!_agotado) { %>
+     onclick="abrirPlatillo(<%= p.getIdPlatillo() %>,
+             '<%= escapeJS(p.getNombre()) %>',
+             '<%= escapeJS(p.getDescripcion() != null ? p.getDescripcion() : "") %>',
+             '<%= precioFinal %>',
+         <%= p.getTiempoPrep() %>,
+             '<%= p.getImagen() != null ? p.getImagen() : "" %>',
+         <%= cubiertoXBeca %>,
+         <%= p.getInformacionNutricional() != null ? buildNutriJSON(p.getInformacionNutricional()) : "null" %>
+             )"
+        <% } %>>
+
+    <% if (_agotado) { %>
+    <span class="platillo-badge agotado-badge">AGOTADO</span>
+    <% } else if (p.getTipo() == TipoPlatEnum.MENU) { %>
+    <span class="platillo-badge menu">Menu del dia</span>
+    <% } else if (p.getCategoria() != null) { %>
+    <span class="platillo-badge menu"><%= p.getCategoria().getEtiqueta() %></span>
     <% } %>
-    <% if (cubiertoXBeca) { %>
+
+    <% if (cubiertoXBeca && !_agotado) { %>
     <span class="platillo-badge beca" style="left:auto;right:10px;">Beca</span>
     <% } %>
 
@@ -26,7 +32,9 @@
         <% if (p.getImagen() != null && !p.getImagen().isEmpty()) { %>
         <img src="<%= p.getImagen() %>" alt="<%= p.getNombre() %>">
         <% } else { %>
-
+        <div style="width:100%;height:100%;background:var(--uv-gris-100);
+                    display:flex;align-items:center;justify-content:center;
+                    color:var(--uv-gris-500);font-size:.85rem;">Sin imagen</div>
         <% } %>
     </div>
 
@@ -35,20 +43,35 @@
         <% if (p.getDescripcion() != null) { %>
         <div class="platillo-card-desc"><%= p.getDescripcion() %></div>
         <% } %>
+        <% if (p.getTipo() == TipoPlatEnum.MENU && p.getCupo() != null && !_agotado) {
+            int rest = p.getRestante();
+            if (rest > 0 && rest <= 10) {
+        %>
+        <div style="font-size:.7rem;color:var(--uv-rojo);font-weight:600;margin-top:4px;">
+            Solo quedan <%= rest %>
+        </div>
+        <%   } } %>
     </div>
 
     <div class="platillo-card-footer">
         <div class="platillo-precio <%= cubiertoXBeca ? "gratis" : "" %>">
             <%= cubiertoXBeca ? "Gratis" : "$" + p.getPrecio().toPlainString() %>
         </div>
-        <% if (!esAdmin) { %>
+        <% if (_agotado) { %>
+        <button class="btn-agregar" disabled
+                style="background:var(--uv-gris-300);cursor:not-allowed;color:var(--uv-gris-700);">
+            Agotado
+        </button>
+        <% } else if (!esAdmin) { %>
         <button class="btn-agregar"
                 onclick="event.stopPropagation();
-                         agregarRapido(<%= p.getIdPlatillo() %>,
-                            '<%= escapeJS(p.getNombre()) %>',
-                            '<%= precioFinal %>',
-                            <%= cubiertoXBeca %>)"
-                title="Agregar al carrito">+</button>
+                        agregarRapido(<%= p.getIdPlatillo() %>,
+                        '<%= escapeJS(p.getNombre()) %>',
+                    <%= precioFinal %>,
+                        '<%= p.getImagen() != null ? p.getImagen() : "" %>',
+                    <%= cubiertoXBeca %>);">
+            + Agregar
+        </button>
         <% } %>
     </div>
 </div>

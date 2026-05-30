@@ -2,6 +2,8 @@ package mx.uv.comedor.servlet;
 
 import mx.uv.comedor.dao.EmpleadoCocinaDAO;
 import mx.uv.comedor.dao.PedidoDAO;
+import mx.uv.comedor.dao.RecetaDAO;
+import mx.uv.comedor.model.DetallePedido;
 import mx.uv.comedor.model.EmpleadoCocina;
 import mx.uv.comedor.model.EstadoPedidoEnum;
 import mx.uv.comedor.model.RolEnum;
@@ -12,14 +14,19 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @WebServlet(urlPatterns = { "/empleado/dashboard", "/empleado/estado" })
 public class EmpleadoServlet extends HttpServlet {
 
     private final PedidoDAO         pedidoDAO   = new PedidoDAO();
     private final EmpleadoCocinaDAO empleadoDAO = new EmpleadoCocinaDAO();
+    private final RecetaDAO         recetaDAO   = new RecetaDAO();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -63,8 +70,30 @@ public class EmpleadoServlet extends HttpServlet {
             if (empCocina != null) {
                 idEmpleadoCocina = empCocina.getIdEmpleado();
             }
-            // Si es ADMIN que actúa como empleado, idEmpleadoCocina puede ser null —
+            // Si es ADMIN que actua como empleado, idEmpleadoCocina puede ser null —
             // el log entonces se queda sin firmar.
+
+            //  Si el nuevo estado es ENTREGADO, descontar inventario
+            if (estado == EstadoPedidoEnum.ENTREGADO) {
+                List<DetallePedido> detallesPedido = pedidoDAO.obtenerDetalles(idPedido);
+                Map<Long, Integer> platillosCantidad = new HashMap<>();
+                for (DetallePedido det : detallesPedido) {
+                    platillosCantidad.merge(det.getIdPlatillo(), det.getCantidad(), Integer::sum);
+                }
+
+                // Verificar que haya stock suficiente
+                List<String> faltantes = recetaDAO.verificarStockSuficiente(platillosCantidad);
+                if (!faltantes.isEmpty()) {
+                    resp.sendRedirect(req.getContextPath()
+                            + "/empleado/dashboard?error=Sin stock para entregar: "
+                            + String.join("; ", faltantes));
+                    return;
+                }
+
+                // Descontar stock automaticamente
+                recetaDAO.descontarStock(platillosCantidad, usuario.getIdUsuario(),
+                        "Entrega pedido #" + idPedido);
+            }
 
             pedidoDAO.cambiarEstado(idPedido, estado, idEmpleadoCocina, comentario);
             resp.sendRedirect(req.getContextPath() + "/empleado/dashboard");

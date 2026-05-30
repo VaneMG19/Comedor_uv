@@ -15,6 +15,10 @@ public class Platillo {
     private CategoriaPlatEnum categoria;
     private int           tiempoPrep;
     private InformacionNutricional informacionNutricional;
+    // Campos auxiliares para cupo (solo se llenan cuando viene del menu del dia)
+    private Integer cupo;       // Cantidad total programada (ej: 50)
+    private Integer vendidos;   // Cantidad ya pedida
+
 
     public Platillo() {}
 
@@ -60,4 +64,22 @@ public class Platillo {
     public void setTiempoPrep(int t)         { this.tiempoPrep = t; }
     public InformacionNutricional getInformacionNutricional() { return informacionNutricional; }
     public void setInformacionNutricional(InformacionNutricional i) { this.informacionNutricional = i; }
+    public Integer getCupo()              { return cupo; }
+    public void setCupo(Integer c)        { this.cupo = c; }
+    public Integer getVendidos()          { return vendidos; }
+    public void setVendidos(Integer v)    { this.vendidos = v; }
+
+    /** Disponibilidad real: stock no agotado y disponible activo. */
+    public boolean isAgotado() {
+        if (cupo == null) return false;
+        int vend = vendidos != null ? vendidos : 0;
+        return vend >= cupo;
+    }
+
+    public int getRestante() {
+        if (cupo == null) return -1;
+        int vend = vendidos != null ? vendidos : 0;
+        return Math.max(0, cupo - vend);
+    }
+
 }

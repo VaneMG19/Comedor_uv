@@ -1,5 +1,5 @@
-/**
- * styles.js — UI global: sidebar, dropdowns, tabs, responsive
+/*
+  styles.js — UI global: sidebar, dropdowns, tabs, responsive
  */
 function toggleSidebar() {
     const sidebar = document.getElementById('sidebar');

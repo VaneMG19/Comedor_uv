@@ -2,14 +2,14 @@ package mx.uv.comedor.model;
 
 import java.time.LocalDateTime;
 
-/**
- * POJO de tarjeta_usuario.
- * IMPORTANTE: solo se guarda info no sensible:
- *  - últimos 4 dígitos
- *  - marca (Visa/Mastercard)
- *  - mes y año de vencimiento
- *  - alias
- * NUNCA se guarda el número completo ni el CVV.
+/*
+  tarjeta_usuario.
+  IMPORTANTE: solo se guarda info no sensible:
+   - últimos 4 dígitos
+   - marca (Visa/Mastercard)
+   - mes y año de vencimiento
+   - alias
+  NUNCA se guarda el número completo ni el CVV.
  */
 public class TarjetaUsuario {
 
@@ -27,23 +27,22 @@ public class TarjetaUsuario {
 
     public TarjetaUsuario() {}
 
-    /** Devuelve algo como "•••• •••• •••• 1234" */
+    /* Devuelve algo como "•••• •••• •••• 1234" */
     public String getNumeroEnmascarado() {
         return "•••• •••• •••• " + (ultimos4 != null ? ultimos4 : "----");
     }
 
-    /** Devuelve "12/2027" */
+    /* Devuelve "12/2027" */
     public String getVencimientoFormateado() {
         return String.format("%02d/%d", mesVencimiento, anioVencimiento);
     }
 
-    /** Emoji o letra de la marca */
+    /*Emoji o letra de la marca */
     public String getIconoMarca() {
         if (marca == null) return "💳";
         switch (marca) {
             case "VISA":       return "💳";
             case "MASTERCARD": return "💳";
-            case "AMEX":       return "💳";
             default:           return "💳";
         }
     }

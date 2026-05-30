@@ -67,7 +67,7 @@ public class EstudianteDAO {
         String sql = """
             SELECT e.id_estudiante, e.id_usuario, e.matricula, e.carrera, e.semestre
             FROM estudiante e
-            WHERE e.matricula = ?
+            WHERE LOWER(e.matricula) = LOWER(?)
             """;
 
         try (Connection con = DBConnection.getConnection();
