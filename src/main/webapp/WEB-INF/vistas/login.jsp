@@ -108,24 +108,6 @@
       <p>Ordena tu comida del día, programa tu recogida y disfruta
         de platillos frescos preparados para ti.</p>
     </div>
-    <div class="brand-features">
-      <div class="brand-feature">
-        <div class="feat-icon"></div>
-        Menú del día con información nutricional
-      </div>
-      <div class="brand-feature">
-        <div class="feat-icon"></div>
-        Programa tu pedido con anticipación
-      </div>
-      <div class="brand-feature">
-        <div class="feat-icon"></div>
-        Gestión de beca alimentaria
-      </div>
-      <div class="brand-feature">
-        <div class="feat-icon"></div>
-        Comprobante PDF con código QR
-      </div>
-    </div>
   </div>
 
   <div class="login-form-panel">

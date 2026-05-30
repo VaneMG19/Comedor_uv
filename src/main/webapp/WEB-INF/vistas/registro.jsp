@@ -143,11 +143,7 @@
             <h2>Crea tu cuenta universitaria</h2>
             <p>Accede al comedor con tu correo institucional de la UV.</p>
         </div>
-        <div class="brand-roles">
-            <div class="brand-role"><span class="icon"></span><span>Estudiantes - pedidos</span></div>
-            <div class="brand-role"><span class="icon"></span><span>Becados - calendario de comidas</span></div>
-            <div class="brand-role"><span class="icon"></span><span>Docentes - pedidos y pago</span></div>
-        </div>
+
     </div>
 
     <div class="registro-form-panel">
