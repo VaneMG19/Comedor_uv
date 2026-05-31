@@ -1,9 +1,17 @@
 <%
     // _platillo-card.jspf
-
+    // Variables esperadas en el contexto:
+    //   Platillo p
+    //   boolean cubiertoXBeca
+    //   String precioFinal
+    //   boolean esAdmin (si existe)
     boolean _agotado = p.isAgotado() || !p.isDisponible();
+    String _catName = p.getCategoria() != null ? p.getCategoria().name() : "OTRO";
 %>
 <div class="platillo-card <%= _agotado ? "platillo-agotado" : "" %>"
+     data-nombre="<%= p.getNombre().toLowerCase().replace("\"","") %>"
+     data-categoria="<%= _catName %>"
+     data-precio="<%= p.getPrecio().toPlainString() %>"
         <% if (!_agotado) { %>
      onclick="abrirPlatillo(<%= p.getIdPlatillo() %>,
              '<%= escapeJS(p.getNombre()) %>',
