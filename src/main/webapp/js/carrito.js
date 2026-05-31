@@ -1,5 +1,5 @@
-/**
- * carrito.js — Gestión del carrito en memoria
+/*
+  carrito.js — Gestión del carrito en memoria
  */
 let carrito = { items: [], tipoPedido: 'INMEDIATO', metodoPago: 'EFECTIVO', fechaRecogida: null, horaRecogida: null };
 let platilloActual = null;
@@ -41,11 +41,11 @@ function abrirModalPlatillo(datos) {
         precioEl.textContent = '$' + parseFloat(datos.precioFinal).toFixed(2);
         precioEl.style.color = 'var(--uv-azul)';
     }
-    document.getElementById('modal-platillo-tiempo').textContent = '⏱️ ' + (datos.tiempoPrep || 15) + ' min';
+    document.getElementById('modal-platillo-tiempo').textContent = (datos.tiempoPrep || 15) + ' min';
     const imgContainer = document.getElementById('modal-platillo-img');
     imgContainer.innerHTML = datos.imagen
         ? `<img src="${datos.imagen}" alt="${datos.nombre}" style="width:100%;height:100%;object-fit:cover;">`
-        : '🍽️';
+        : '';
     renderizarNutricion(datos.nutri);
     const firstTab = document.querySelector('#modal-platillo .tab-btn');
     if (firstTab) switchModalTab('detalle', firstTab);
@@ -65,7 +65,7 @@ function renderizarNutricion(nutri) {
         contenedor.innerHTML = '<div style="text-align:center;color:var(--uv-gris-500);padding:20px;">Sin información nutricional registrada</div>';
         return;
     }
-    const nivelLabel = { BAJO: '🟢 Bajo', MEDIO: '🟡 Medio', ALTO: '🔴 Alto' };
+    const nivelLabel = { BAJO: 'Bajo', MEDIO: 'Medio', ALTO: 'Alto' };
     let html = `<div class="nutri-grid">
         <div class="nutri-item"><div class="nutri-valor">${nutri.calorias||0}</div><div class="nutri-label">kcal</div></div>
         <div class="nutri-item"><div class="nutri-valor">${nutri.proteinas||0}g</div><div class="nutri-label">Proteínas</div></div>
@@ -77,11 +77,11 @@ function renderizarNutricion(nutri) {
     if (nutri.huellaCarbonoKg && nutri.nivelHuella)
         html += `<div style="margin-top:12px;"><span class="huella-badge ${nutri.nivelHuella}">${nivelLabel[nutri.nivelHuella]||nutri.nivelHuella} · ${nutri.huellaCarbonoKg} kg CO₂eq</span></div>`;
     let chips = '';
-    if (nutri.esVegetariano) chips += '<span class="chip verde">🥦 Vegetariano</span>';
-    if (nutri.esVegano)      chips += '<span class="chip verde">🌱 Vegano</span>';
-    if (nutri.esGlutenFree)  chips += '<span class="chip amarillo">🌾 Sin gluten</span>';
+    if (nutri.esVegetariano) chips += '<span class="chip verde">Vegetariano</span>';
+    if (nutri.esVegano)      chips += '<span class="chip verde">Vegano</span>';
+    if (nutri.esGlutenFree)  chips += '<span class="chip amarillo">Sin gluten</span>';
     if (chips) html += `<div class="chips" style="margin-top:12px;">${chips}</div>`;
-    if (nutri.alergenos) html += `<div style="margin-top:12px;font-size:.85rem;"><strong>⚠️ Alérgenos:</strong> ${nutri.alergenos}</div>`;
+    if (nutri.alergenos) html += `<div style="margin-top:12px;font-size:.85rem;"><strong>Alérgenos:</strong> ${nutri.alergenos}</div>`;
     contenedor.innerHTML = html;
 }
 
@@ -95,16 +95,27 @@ function agregarAlCarrito() {
     if (!platilloActual) return;
     const personalizacion = document.getElementById('modal-personalizacion').value.trim();
     const existente = carrito.items.find(i => i.idPlatillo === platilloActual.idPlatillo);
-    if (existente) { existente.cantidad += platilloActual.cantidad; }
-    else {
-        carrito.items.push({ idPlatillo: platilloActual.idPlatillo, nombre: platilloActual.nombre,
-            precio: parseFloat(platilloActual.precioFinal)||0, cantidad: platilloActual.cantidad,
+    if (existente) {
+        existente.cantidad += platilloActual.cantidad;
+        if (personalizacion) {
+            existente.personalizacion = existente.personalizacion
+                ? existente.personalizacion + '; ' + personalizacion
+                : personalizacion;
+        }
+    } else {
+        carrito.items.push({
+            idPlatillo: platilloActual.idPlatillo,
+            nombre: platilloActual.nombre,
+            precio: parseFloat(platilloActual.precioFinal)||0,
+            cantidad: platilloActual.cantidad,
             cubiertoPorBeca: platilloActual.cubiertoPorBeca||false,
-            personalizacion, imagen: platilloActual.imagen||null });
+            personalizacion,
+            imagen: platilloActual.imagen||null
+        });
     }
     actualizarBadgeCarrito();
     cerrarModalPlatillo();
-    mostrarMensaje('✅ ' + platilloActual.nombre + ' agregado', 'exito');
+    mostrarMensaje(platilloActual.nombre + ' agregado al carrito', 'exito');
     setTimeout(() => {
         if (!document.getElementById('carrito-drawer').classList.contains('abierto')) toggleCarrito();
         else renderizarCarrito();
@@ -127,18 +138,18 @@ function renderizarCarrito() {
     if (footer) footer.style.display = 'block';
     container.innerHTML = carrito.items.map((item, idx) => `
         <div class="carrito-item">
-            <div class="carrito-item-img">${item.imagen ? `<img src="${item.imagen}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;">` : '🍽️'}</div>
+            <div class="carrito-item-img">${item.imagen ? `<img src="${item.imagen}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;">` : ''}</div>
             <div class="carrito-item-info">
                 <div class="carrito-item-nombre">${item.nombre}</div>
-                <div class="carrito-item-precio ${item.cubiertoPorBeca ? 'beca' : ''}">${item.cubiertoPorBeca ? '🎫 Beca' : '$' + (item.precio * item.cantidad).toFixed(2)}</div>
-                ${item.personalizacion ? `<div style="font-size:.75rem;color:var(--uv-gris-500);font-style:italic;">📝 ${item.personalizacion}</div>` : ''}
+                <div class="carrito-item-precio ${item.cubiertoPorBeca ? 'beca' : ''}">${item.cubiertoPorBeca ? 'Beca' : '$' + (item.precio * item.cantidad).toFixed(2)}</div>
+                ${item.personalizacion ? `<div style="font-size:.75rem;color:var(--uv-gris-500);font-style:italic;">${item.personalizacion}</div>` : ''}
                 <div class="cantidad-control">
                     <button class="cantidad-btn" onclick="cambiarCantidadCarrito(${idx},-1)">−</button>
                     <span class="cantidad-num">${item.cantidad}</span>
                     <button class="cantidad-btn" onclick="cambiarCantidadCarrito(${idx},1)">+</button>
                 </div>
             </div>
-            <button class="carrito-eliminar" onclick="eliminarDelCarrito(${idx})">🗑️</button>
+            <button class="carrito-eliminar" onclick="eliminarDelCarrito(${idx})">×</button>
         </div>`).join('');
     calcularTotales();
 }
@@ -160,10 +171,10 @@ function calcularTotales() {
         if (item.cubiertoPorBeca) descBeca += imp;
     });
     const total = subtotal - descBeca;
-    const elSub  = document.getElementById('carrito-subtotal');
-    const elTot  = document.getElementById('carrito-total');
+    const elSub   = document.getElementById('carrito-subtotal');
+    const elTot   = document.getElementById('carrito-total');
     const filaBeca = document.getElementById('fila-beca');
-    const elDesc = document.getElementById('carrito-descuento-beca');
+    const elDesc  = document.getElementById('carrito-descuento-beca');
     if (elSub) elSub.textContent = '$' + subtotal.toFixed(2);
     if (elTot) elTot.textContent = '$' + total.toFixed(2);
     if (filaBeca) filaBeca.style.display = descBeca > 0 ? 'flex' : 'none';
@@ -178,9 +189,9 @@ function actualizarBadgeCarrito() {
     badge.style.display = total > 0 ? 'inline-flex' : 'none';
 }
 
-// ═══════════════════════════════════════════════════════════════════
+
 //   SELECTOR DE TARJETAS GUARDADAS
-// ═══════════════════════════════════════════════════════════════════
+
 
 async function cargarTarjetasUsuario() {
     try {
@@ -225,9 +236,8 @@ function onMetodoPagoChange(metodo) {
     }
     cont.style.display = 'block';
 
-    // Si aún no terminó de cargar
     if (!tarjetasYaCargadas) {
-        cont.innerHTML = '<div style="padding:12px;text-align:center;color:var(--uv-gris-500);font-size:.85rem;">⏳ Cargando tarjetas...</div>';
+        cont.innerHTML = '<div style="padding:12px;text-align:center;color:var(--uv-gris-500);font-size:.85rem;">Cargando tarjetas...</div>';
         return;
     }
 
@@ -237,10 +247,10 @@ function onMetodoPagoChange(metodo) {
             <div style="background:var(--uv-amarillo-light);
                         border-left:4px solid var(--uv-amarillo);
                         padding:12px;border-radius:10px;font-size:.85rem;line-height:1.5;">
-                <strong>⚠️ No tienes tarjetas guardadas</strong><br>
+                <strong>No tienes tarjetas guardadas</strong><br>
                 <a href="${ctx}/perfil?tab=tarjetas"
                    style="color:var(--uv-azul);font-weight:600;text-decoration:underline;">
-                   Agregar tarjeta en mi perfil →
+                   Agregar tarjeta en mi perfil
                 </a>
             </div>`;
         return;
@@ -271,7 +281,6 @@ function onMetodoPagoChange(metodo) {
                             ${escapeHTML(t.marca || '')} •••• ${escapeHTML(t.ultimos4 || '')}
                         </div>
                     </div>
-                    <div style="font-size:1.4rem;">💳</div>
                 </label>
             `).join('')}
         </div>`;
@@ -289,21 +298,20 @@ function escapeHTML(s) {
         .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-// ═══════════════════════════════════════════════════════════════════
+
 
 async function confirmarPedido() {
     if (carrito.items.length === 0) { mostrarMensaje('Agrega al menos un platillo', 'error'); return; }
     const tipo   = document.querySelector('input[name="tipoPedido"]:checked')?.value || 'INMEDIATO';
     const metodo = document.getElementById('metodoPago')?.value || 'EFECTIVO';
 
-    // Validar que tenga tarjeta si elige TARJETA
     if (metodo === 'TARJETA') {
         if (tarjetasUsuario.length === 0) {
-            mostrarMensaje('⚠️ Agrega una tarjeta en tu perfil primero', 'aviso');
+            mostrarMensaje('Agrega una tarjeta en tu perfil primero', 'aviso');
             return;
         }
         if (!tarjetaSeleccionadaId) {
-            mostrarMensaje('⚠️ Selecciona una tarjeta', 'aviso');
+            mostrarMensaje('Selecciona una tarjeta', 'aviso');
             return;
         }
     }
@@ -314,6 +322,7 @@ async function confirmarPedido() {
         if (!fecha || !hora) { mostrarMensaje('Indica fecha y hora de recogida', 'aviso'); return; }
         carrito.fechaRecogida = fecha; carrito.horaRecogida = hora;
     }
+
     const params = new URLSearchParams();
     params.append('tipoPedido', tipo);
     params.append('metodoPago', metodo);
@@ -327,18 +336,20 @@ async function confirmarPedido() {
         params.append('horaRecogida',  carrito.horaRecogida);
         params.append('lugarRecogida', 'Ventanilla principal');
     }
-    // Leer notas/instrucciones especiales del textarea
+
     const notasEl = document.getElementById('notasPedido');
     const notasTxt = notasEl ? (notasEl.value || '').trim() : '';
     params.append('notas', notasTxt);
-    // Líneas 334-337 — reemplaza el forEach completo
+
     carrito.items.forEach(item => {
         params.append('platilloId',      item.idPlatillo);
         params.append('cantidad',        item.cantidad);
         params.append('personalizacion', item.personalizacion || '');
     });
+
     const btn = document.querySelector('.carrito-footer .btn-primario');
     if (btn) { btn.disabled = true; btn.textContent = 'Procesando...'; }
+
     try {
         const ctx  = document.body.dataset.contextPath || '';
         const resp = await fetch(ctx + '/pedido/crear', {
@@ -353,7 +364,7 @@ async function confirmarPedido() {
         window.location.href = resp.redirected ? resp.url : ctx + '/pedido/historial';
     } catch (err) {
         mostrarMensaje('Error de conexión. Verifica tu red.', 'error');
-        if (btn) { btn.disabled = false; btn.textContent = 'Confirmar Pedido →'; }
+        if (btn) { btn.disabled = false; btn.textContent = 'Confirmar Pedido'; }
     }
 }
 

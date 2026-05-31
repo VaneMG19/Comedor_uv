@@ -16,7 +16,7 @@
         <div class="carrito-resumen">
             <div class="carrito-fila"><span>Subtotal</span><span id="carrito-subtotal">$0.00</span></div>
             <div class="carrito-fila beca-desc" id="fila-beca" style="display:none;">
-                <span>🎫 Descuento beca</span><span id="carrito-descuento-beca">-$0.00</span>
+                <span> Descuento beca</span><span id="carrito-descuento-beca">-$0.00</span>
             </div>
             <div class="carrito-fila total"><span>Total</span><span id="carrito-total">$0.00</span></div>
         </div>
@@ -46,8 +46,8 @@
         <div style="margin-bottom:14px;">
             <label class="form-label">Método de pago</label>
             <select id="metodoPago" class="form-control" onchange="onMetodoPagoChange(this.value)">
-                <option value="EFECTIVO">💵 Efectivo</option>
-                <option value="TARJETA">💳 Tarjeta</option>
+                <option value="EFECTIVO"> Efectivo</option>
+                <option value="TARJETA"> Tarjeta</option>
             </select>
 
             <!-- Selector de tarjetas (se llena con JS cuando se elige TARJETA) -->
@@ -80,10 +80,10 @@
             <div id="modal-platillo-img"
                  style="width:100%;height:200px;border-radius:12px;overflow:hidden;
                         background:var(--uv-gris-200);margin-bottom:16px;
-                        display:flex;align-items:center;justify-content:center;font-size:4rem;">🍽️</div>
+                        display:flex;align-items:center;justify-content:center;font-size:4rem;"></div>
             <div class="tabs" style="margin-bottom:16px;">
                 <button class="tab-btn activo" onclick="switchModalTab('detalle',this)">Detalle</button>
-                <button class="tab-btn" onclick="switchModalTab('nutricion',this)">🥗 Nutrición</button>
+                <button class="tab-btn" onclick="switchModalTab('nutricion',this)"> Nutrición</button>
             </div>
             <div id="modal-tab-detalle">
                 <p id="modal-platillo-desc" style="color:var(--uv-gris-700);font-size:.9rem;margin-bottom:16px;"></p>
@@ -94,7 +94,7 @@
                     </div>
                     <div style="text-align:right;">
                         <span style="font-size:.8rem;color:var(--uv-gris-500);">Tiempo estimado</span>
-                        <div id="modal-platillo-tiempo" style="font-weight:600;">⏱️ 15 min</div>
+                        <div id="modal-platillo-tiempo" style="font-weight:600;">️ 15 min</div>
                     </div>
                 </div>
                 <div class="form-group">

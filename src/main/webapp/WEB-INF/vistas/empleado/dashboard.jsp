@@ -130,22 +130,22 @@
 
  <div class="page-header d-flex justify-between align-center flex-wrap gap-2">
   <div>
-   <div class="page-title">Panel de Cocina 👨‍🍳</div>
+   <div class="page-title">Panel de Cocina </div>
    <div class="page-subtitle">
     <%= pedidos.size() %> pedidos activos —
     Se actualiza automáticamente cada 30 segundos
    </div>
   </div>
-  <button class="btn btn-ghost" onclick="location.reload()">🔄 Actualizar</button>
+  <button class="btn btn-ghost" onclick="location.reload()"> Actualizar</button>
  </div>
 
- <!-- Barra de progreso de auto-refresh -->
+ // Barra de progreso de auto-refresh
  <div class="refresh-bar"></div>
 
  <!-- KPIs rápidos -->
  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;">
   <div class="stat-card" style="padding:14px;">
-   <div class="stat-icon amarillo" style="width:38px;height:38px;font-size:1.1rem;">⏳</div>
+   <div class="stat-icon amarillo" style="width:38px;height:38px;font-size:1.1rem;"></div>
    <div>
     <div class="stat-valor" style="font-size:1.4rem;"><%= pendientes %></div>
     <div class="stat-label">Pendientes</div>
@@ -174,13 +174,13 @@
   </div>
  </div>
 
- <!-- Filtros -->
+ // Filtros
  <div class="filtro-tabs">
   <button class="filtro-tab activo" onclick="filtrar('todos', this)">
    Todos <span class="filtro-count"><%= pedidos.size() %></span>
   </button>
   <button class="filtro-tab" onclick="filtrar('PENDIENTE', this)">
-   ⏳ Pendientes <span class="filtro-count"><%= pendientes %></span>
+    Pendientes <span class="filtro-count"><%= pendientes %></span>
   </button>
   <button class="filtro-tab" onclick="filtrar('PREPARANDO', this)">
    Preparando <span class="filtro-count"><%= preparando %></span>
@@ -193,7 +193,7 @@
   </button>
  </div>
 
- <!-- Grid de pedidos -->
+ // Grid de pedidos
  <div id="pedidos-grid"
       style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;">
 
@@ -219,7 +219,7 @@
        data-estado="<%= p.getEstado().name() %>"
        data-tipo="<%= p.getTipo().name() %>">
 
-   <!-- Header del pedido -->
+   // Header del pedido
    <div class="pedido-cocina-header">
     <div>
      <div style="font-family:var(--fuente-display);font-weight:700;
