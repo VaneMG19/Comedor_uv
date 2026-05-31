@@ -9,17 +9,16 @@ import java.net.URI;
 /*
   Conexion a PostgreSQL.
   Funciona tanto en local (lee .env) como en Railway (lee variables de entorno).
-
-  En Railway, basta con tener la variable DATABASE_URL configurada y todo funciona.
  */
 public class DBConnection {
 
+    // Cargar el .env del proyecto local. En Railway no existe y se ignora.
     private static final Dotenv dotenv;
     static {
         Dotenv tmp;
         try {
-            // En local lee el .env; en Railway no existe y se ignora
             tmp = Dotenv.configure()
+                    .directory("C:/Users/vmg19/IdeaProjects/comedor_universitario")
                     .ignoreIfMissing()
                     .ignoreIfMalformed()
                     .load();
@@ -35,11 +34,10 @@ public class DBConnection {
 
     static {
         // Prioridad 1: DATABASE_URL completa (Railway/Heroku la dan asi)
-        String databaseUrl = getEnv("DATABASE_URL", null);
+        String databaseUrl = System.getenv("DATABASE_URL");
 
         if (databaseUrl != null && !databaseUrl.isBlank()) {
             try {
-                // Convertir "postgres://user:pass@host:port/db" a formato JDBC
                 if (databaseUrl.startsWith("postgres://")) {
                     databaseUrl = databaseUrl.replaceFirst("postgres://", "postgresql://");
                 }
@@ -74,6 +72,8 @@ public class DBConnection {
         }
 
         System.out.println("[DBConnection] Conectando a: " + URL);
+        System.out.println("[DBConnection] Usuario: " + USER);
+        // No imprimir password por seguridad
     }
 
     public static Connection getConnection() throws SQLException {
