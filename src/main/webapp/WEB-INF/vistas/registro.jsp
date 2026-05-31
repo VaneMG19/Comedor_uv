@@ -290,7 +290,7 @@
                     <div class="input-icon-wrapper">
                         <span class="input-icon"></span>
                         <input type="text" id="carrera" name="carrera" class="form-control"
-                               placeholder="Ingeniería en Sistemas Computacionales">
+                               placeholder="Ingeniería en Informática">
                     </div>
                 </div>
             </div>
