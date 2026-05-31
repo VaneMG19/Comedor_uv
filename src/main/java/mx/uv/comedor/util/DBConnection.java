@@ -4,34 +4,76 @@ import io.github.cdimascio.dotenv.Dotenv;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.net.URI;
 
 /*
-  Conexión a PostgreSQL.
-  Lee las credenciales del archivo .env en la raíz del proyecto.
+  Conexion a PostgreSQL.
+  Funciona tanto en local (lee .env) como en Railway (lee variables de entorno).
+
+  En Railway, basta con tener la variable DATABASE_URL configurada y todo funciona.
  */
 public class DBConnection {
 
-    // Una sola declaración de dotenv con la ruta exacta del proyecto
-    private static final Dotenv dotenv = Dotenv.configure()
-            .directory("C:/Users/vmg19/IdeaProjects/comedor_universitario")
-            .ignoreIfMissing()
-            .load();
+    private static final Dotenv dotenv;
+    static {
+        Dotenv tmp;
+        try {
+            // En local lee el .env; en Railway no existe y se ignora
+            tmp = Dotenv.configure()
+                    .ignoreIfMissing()
+                    .ignoreIfMalformed()
+                    .load();
+        } catch (Exception e) {
+            tmp = null;
+        }
+        dotenv = tmp;
+    }
 
-    private static final String HOST     = getEnv("DB_HOST",     "localhost");
-    private static final String PORT     = getEnv("DB_PORT",     "5433");
-    private static final String DATABASE = getEnv("DB_NAME",     "comedor_uv");
-    private static final String USER     = getEnv("DB_USER",     "postgres");
-    private static final String PASSWORD = getEnv("DB_PASSWORD", "");
-
-    private static final String URL =
-            "jdbc:postgresql://" + HOST + ":" + PORT + "/" + DATABASE;
+    private static final String URL;
+    private static final String USER;
+    private static final String PASSWORD;
 
     static {
+        // Prioridad 1: DATABASE_URL completa (Railway/Heroku la dan asi)
+        String databaseUrl = getEnv("DATABASE_URL", null);
+
+        if (databaseUrl != null && !databaseUrl.isBlank()) {
+            try {
+                // Convertir "postgres://user:pass@host:port/db" a formato JDBC
+                if (databaseUrl.startsWith("postgres://")) {
+                    databaseUrl = databaseUrl.replaceFirst("postgres://", "postgresql://");
+                }
+                URI uri = new URI(databaseUrl);
+                String userInfo = uri.getUserInfo();
+                if (userInfo != null && userInfo.contains(":")) {
+                    String[] parts = userInfo.split(":", 2);
+                    USER = parts[0];
+                    PASSWORD = parts[1];
+                } else {
+                    USER = userInfo;
+                    PASSWORD = "";
+                }
+                URL = "jdbc:postgresql://" + uri.getHost() + ":" + uri.getPort() + uri.getPath();
+            } catch (Exception e) {
+                throw new RuntimeException("DATABASE_URL invalida: " + e.getMessage(), e);
+            }
+        } else {
+            // Prioridad 2: variables separadas (modo local con .env)
+            String host = getEnv("DB_HOST", "localhost");
+            String port = getEnv("DB_PORT", "5433");
+            String db   = getEnv("DB_NAME", "comedor_uv");
+            URL = "jdbc:postgresql://" + host + ":" + port + "/" + db;
+            USER = getEnv("DB_USER", "postgres");
+            PASSWORD = getEnv("DB_PASSWORD", "");
+        }
+
         try {
             Class.forName("org.postgresql.Driver");
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Driver PostgreSQL no encontrado.", e);
+            throw new RuntimeException("Driver PostgreSQL no encontrado", e);
         }
+
+        System.out.println("[DBConnection] Conectando a: " + URL);
     }
 
     public static Connection getConnection() throws SQLException {
@@ -39,10 +81,14 @@ public class DBConnection {
     }
 
     private static String getEnv(String key, String defaultValue) {
-        String value = dotenv.get(key, null);
+        // Primero variables del sistema (Railway)
+        String value = System.getenv(key);
         if (value != null && !value.isBlank()) return value;
-        value = System.getenv(key);
-        if (value != null && !value.isBlank()) return value;
+        // Luego .env (local)
+        if (dotenv != null) {
+            value = dotenv.get(key, null);
+            if (value != null && !value.isBlank()) return value;
+        }
         return defaultValue;
     }
 
