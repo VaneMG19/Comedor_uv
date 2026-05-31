@@ -3,7 +3,7 @@
 <div class="carrito-drawer" id="carrito-drawer">
     <div class="carrito-header">
         <div class="carrito-titulo">🛒 Mi Carrito</div>
-        <button class="carrito-cerrar" onclick="toggleCarrito()">X</button>
+        <button class="carrito-cerrar" onclick="toggleCarrito()">✕</button>
     </div>
     <div class="carrito-items" id="carrito-items">
         <div id="carrito-vacio" style="text-align:center;padding:40px 20px;color:var(--uv-gris-500);">
@@ -16,7 +16,7 @@
         <div class="carrito-resumen">
             <div class="carrito-fila"><span>Subtotal</span><span id="carrito-subtotal">$0.00</span></div>
             <div class="carrito-fila beca-desc" id="fila-beca" style="display:none;">
-                <span>Descuento beca</span><span id="carrito-descuento-beca">-$0.00</span>
+                <span>🎫 Descuento beca</span><span id="carrito-descuento-beca">-$0.00</span>
             </div>
             <div class="carrito-fila total"><span>Total</span><span id="carrito-total">$0.00</span></div>
         </div>
@@ -25,11 +25,11 @@
             <div style="display:flex;gap:8px;">
                 <label style="flex:1;cursor:pointer;font-size:.875rem;">
                     <input type="radio" name="tipoPedido" value="INMEDIATO" checked
-                           onchange="actualizarTipoPedido(this.value)">Inmediato
+                           onchange="actualizarTipoPedido(this.value)"> Inmediato
                 </label>
                 <label style="flex:1;cursor:pointer;font-size:.875rem;">
                     <input type="radio" name="tipoPedido" value="ANTICIPADO"
-                           onchange="actualizarTipoPedido(this.value)">Programar
+                           onchange="actualizarTipoPedido(this.value)"> Programar
                 </label>
             </div>
         </div>
@@ -46,12 +46,21 @@
         <div style="margin-bottom:14px;">
             <label class="form-label">Método de pago</label>
             <select id="metodoPago" class="form-control" onchange="onMetodoPagoChange(this.value)">
-                <option value="EFECTIVO">Efectivo</option>
-                <option value="TARJETA">Tarjeta</option>
+                <option value="EFECTIVO">💵 Efectivo</option>
+                <option value="TARJETA">💳 Tarjeta</option>
             </select>
 
             <!-- Selector de tarjetas (se llena con JS cuando se elige TARJETA) -->
             <div id="selector-tarjeta-cont" style="display:none;margin-top:12px;"></div>
+        </div>
+        <div style="margin-bottom:14px;">
+            <label class="form-label" for="notasPedido">
+                Instrucciones especiales <span style="color:var(--uv-gris-500);font-weight:400;font-size:.8rem;">(opcional)</span>
+            </label>
+            <textarea id="notasPedido" class="form-control" rows="2"
+                      maxlength="200"
+                      placeholder="Ej: sin cebolla, salsa aparte..."
+                      style="resize:vertical;font-family:inherit;"></textarea>
         </div>
         <button class="btn btn-primario btn-block btn-lg" onclick="confirmarPedido()">
             Confirmar Pedido
@@ -65,16 +74,16 @@
     <div class="modal" style="max-width:580px;">
         <div class="modal-header">
             <div class="modal-titulo" id="modal-platillo-nombre">Platillo</div>
-            <button class="modal-cerrar" onclick="cerrarModalPlatillo()">X</button>
+            <button class="modal-cerrar" onclick="cerrarModalPlatillo()">✕</button>
         </div>
         <div class="modal-body">
             <div id="modal-platillo-img"
                  style="width:100%;height:200px;border-radius:12px;overflow:hidden;
- background:var(--uv-gris-200);margin-bottom:16px;
- display:flex;align-items:center;justify-content:center;font-size:4rem;"></div>
+                        background:var(--uv-gris-200);margin-bottom:16px;
+                        display:flex;align-items:center;justify-content:center;font-size:4rem;">🍽️</div>
             <div class="tabs" style="margin-bottom:16px;">
                 <button class="tab-btn activo" onclick="switchModalTab('detalle',this)">Detalle</button>
-                <button class="tab-btn" onclick="switchModalTab('nutricion',this)">Nutrición</button>
+                <button class="tab-btn" onclick="switchModalTab('nutricion',this)">🥗 Nutrición</button>
             </div>
             <div id="modal-tab-detalle">
                 <p id="modal-platillo-desc" style="color:var(--uv-gris-700);font-size:.9rem;margin-bottom:16px;"></p>
@@ -85,7 +94,7 @@
                     </div>
                     <div style="text-align:right;">
                         <span style="font-size:.8rem;color:var(--uv-gris-500);">Tiempo estimado</span>
-                        <div id="modal-platillo-tiempo" style="font-weight:600;"> 15 min</div>
+                        <div id="modal-platillo-tiempo" style="font-weight:600;">⏱️ 15 min</div>
                     </div>
                 </div>
                 <div class="form-group">
@@ -118,6 +127,5 @@
 <script src="${pageContext.request.contextPath}/js/styles.js"></script>
 <script src="${pageContext.request.contextPath}/js/notificaciones.js"></script>
 <script src="${pageContext.request.contextPath}/js/carrito.js"></script>
-<script src="${pageContext.request.contextPath}/js/accesibilidad.js"></script>
 </body>
 </html>

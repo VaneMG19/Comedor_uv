@@ -114,6 +114,7 @@ public class PedidoServlet extends HttpServlet {
 
         String[] idsPlat    = req.getParameterValues("platilloId");
         String[] cantidades = req.getParameterValues("cantidad");
+        String[] personalizaciones = req.getParameterValues("personalizacion");
 
         if (idsPlat == null || idsPlat.length == 0) {
             req.setAttribute("error", "Debes seleccionar al menos un platillo");
@@ -139,6 +140,10 @@ public class PedidoServlet extends HttpServlet {
             BigDecimal precio = platillo.calcularPrecioFinal(usuario.getRol());
             DetallePedido d = new DetallePedido(idPlatillo, cantidad, precio, false);
             d.setPlatillo(platillo);
+            if (personalizaciones != null && i < personalizaciones.length) {
+                String pers = personalizaciones[i].trim();
+                if (!pers.isEmpty()) d.setPersonalizaciones(pers);
+            }
             detalles.add(d);
         }
 

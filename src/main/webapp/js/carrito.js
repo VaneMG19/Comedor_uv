@@ -1,5 +1,5 @@
-/*
-  carrito.js — Gestión del carrito en memoria
+/**
+ * carrito.js — Gestión del carrito en memoria
  */
 let carrito = { items: [], tipoPedido: 'INMEDIATO', metodoPago: 'EFECTIVO', fechaRecogida: null, horaRecogida: null };
 let platilloActual = null;
@@ -41,11 +41,11 @@ function abrirModalPlatillo(datos) {
         precioEl.textContent = '$' + parseFloat(datos.precioFinal).toFixed(2);
         precioEl.style.color = 'var(--uv-azul)';
     }
-    document.getElementById('modal-platillo-tiempo').textContent = ' ' + (datos.tiempoPrep || 15) + ' min';
+    document.getElementById('modal-platillo-tiempo').textContent = '⏱️ ' + (datos.tiempoPrep || 15) + ' min';
     const imgContainer = document.getElementById('modal-platillo-img');
     imgContainer.innerHTML = datos.imagen
         ? `<img src="${datos.imagen}" alt="${datos.nombre}" style="width:100%;height:100%;object-fit:cover;">`
-        : '';
+        : '🍽️';
     renderizarNutricion(datos.nutri);
     const firstTab = document.querySelector('#modal-platillo .tab-btn');
     if (firstTab) switchModalTab('detalle', firstTab);
@@ -77,11 +77,11 @@ function renderizarNutricion(nutri) {
     if (nutri.huellaCarbonoKg && nutri.nivelHuella)
         html += `<div style="margin-top:12px;"><span class="huella-badge ${nutri.nivelHuella}">${nivelLabel[nutri.nivelHuella]||nutri.nivelHuella} · ${nutri.huellaCarbonoKg} kg CO₂eq</span></div>`;
     let chips = '';
-    if (nutri.esVegetariano) chips += '<span class="chip verde"> Vegetariano</span>';
-    if (nutri.esVegano)      chips += '<span class="chip verde"> Vegano</span>';
-    if (nutri.esGlutenFree)  chips += '<span class="chip amarillo"> Sin gluten</span>';
+    if (nutri.esVegetariano) chips += '<span class="chip verde">🥦 Vegetariano</span>';
+    if (nutri.esVegano)      chips += '<span class="chip verde">🌱 Vegano</span>';
+    if (nutri.esGlutenFree)  chips += '<span class="chip amarillo">🌾 Sin gluten</span>';
     if (chips) html += `<div class="chips" style="margin-top:12px;">${chips}</div>`;
-    if (nutri.alergenos) html += `<div style="margin-top:12px;font-size:.85rem;"><strong> Alérgenos:</strong> ${nutri.alergenos}</div>`;
+    if (nutri.alergenos) html += `<div style="margin-top:12px;font-size:.85rem;"><strong>⚠️ Alérgenos:</strong> ${nutri.alergenos}</div>`;
     contenedor.innerHTML = html;
 }
 
@@ -104,7 +104,7 @@ function agregarAlCarrito() {
     }
     actualizarBadgeCarrito();
     cerrarModalPlatillo();
-    mostrarMensaje(' ' + platilloActual.nombre + ' agregado', 'exito');
+    mostrarMensaje('✅ ' + platilloActual.nombre + ' agregado', 'exito');
     setTimeout(() => {
         if (!document.getElementById('carrito-drawer').classList.contains('abierto')) toggleCarrito();
         else renderizarCarrito();
@@ -127,11 +127,11 @@ function renderizarCarrito() {
     if (footer) footer.style.display = 'block';
     container.innerHTML = carrito.items.map((item, idx) => `
         <div class="carrito-item">
-            <div class="carrito-item-img">${item.imagen ? `<img src="${item.imagen}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;">` : ''}</div>
+            <div class="carrito-item-img">${item.imagen ? `<img src="${item.imagen}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;">` : '🍽️'}</div>
             <div class="carrito-item-info">
                 <div class="carrito-item-nombre">${item.nombre}</div>
-                <div class="carrito-item-precio ${item.cubiertoPorBeca ? 'beca' : ''}">${item.cubiertoPorBeca ? ' Beca' : '' + (item.precio * item.cantidad).toFixed(2)}</div>
-                ${item.personalizacion ? `<div style="font-size:.75rem;color:var(--uv-gris-500);font-style:italic;"> ${item.personalizacion}</div>` : ''}
+                <div class="carrito-item-precio ${item.cubiertoPorBeca ? 'beca' : ''}">${item.cubiertoPorBeca ? '🎫 Beca' : '$' + (item.precio * item.cantidad).toFixed(2)}</div>
+                ${item.personalizacion ? `<div style="font-size:.75rem;color:var(--uv-gris-500);font-style:italic;">📝 ${item.personalizacion}</div>` : ''}
                 <div class="cantidad-control">
                     <button class="cantidad-btn" onclick="cambiarCantidadCarrito(${idx},-1)">−</button>
                     <span class="cantidad-num">${item.cantidad}</span>
@@ -178,9 +178,9 @@ function actualizarBadgeCarrito() {
     badge.style.display = total > 0 ? 'inline-flex' : 'none';
 }
 
-
+// ═══════════════════════════════════════════════════════════════════
 //   SELECTOR DE TARJETAS GUARDADAS
-
+// ═══════════════════════════════════════════════════════════════════
 
 async function cargarTarjetasUsuario() {
     try {
@@ -227,7 +227,7 @@ function onMetodoPagoChange(metodo) {
 
     // Si aún no terminó de cargar
     if (!tarjetasYaCargadas) {
-        cont.innerHTML = '<div style="padding:12px;text-align:center;color:var(--uv-gris-500);font-size:.85rem;"> Cargando tarjetas...</div>';
+        cont.innerHTML = '<div style="padding:12px;text-align:center;color:var(--uv-gris-500);font-size:.85rem;">⏳ Cargando tarjetas...</div>';
         return;
     }
 
@@ -237,7 +237,7 @@ function onMetodoPagoChange(metodo) {
             <div style="background:var(--uv-amarillo-light);
                         border-left:4px solid var(--uv-amarillo);
                         padding:12px;border-radius:10px;font-size:.85rem;line-height:1.5;">
-                <strong>No tienes tarjetas guardadas</strong><br>
+                <strong>⚠️ No tienes tarjetas guardadas</strong><br>
                 <a href="${ctx}/perfil?tab=tarjetas"
                    style="color:var(--uv-azul);font-weight:600;text-decoration:underline;">
                    Agregar tarjeta en mi perfil →
@@ -289,7 +289,7 @@ function escapeHTML(s) {
         .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-
+// ═══════════════════════════════════════════════════════════════════
 
 async function confirmarPedido() {
     if (carrito.items.length === 0) { mostrarMensaje('Agrega al menos un platillo', 'error'); return; }
@@ -299,11 +299,11 @@ async function confirmarPedido() {
     // Validar que tenga tarjeta si elige TARJETA
     if (metodo === 'TARJETA') {
         if (tarjetasUsuario.length === 0) {
-            mostrarMensaje(' Agrega una tarjeta en tu perfil primero', 'aviso');
+            mostrarMensaje('⚠️ Agrega una tarjeta en tu perfil primero', 'aviso');
             return;
         }
         if (!tarjetaSeleccionadaId) {
-            mostrarMensaje(' Selecciona una tarjeta', 'aviso');
+            mostrarMensaje('⚠️ Selecciona una tarjeta', 'aviso');
             return;
         }
     }
@@ -327,10 +327,15 @@ async function confirmarPedido() {
         params.append('horaRecogida',  carrito.horaRecogida);
         params.append('lugarRecogida', 'Ventanilla principal');
     }
-    params.append('notas', '');
+    // Leer notas/instrucciones especiales del textarea
+    const notasEl = document.getElementById('notasPedido');
+    const notasTxt = notasEl ? (notasEl.value || '').trim() : '';
+    params.append('notas', notasTxt);
+    // Líneas 334-337 — reemplaza el forEach completo
     carrito.items.forEach(item => {
-        params.append('platilloId', item.idPlatillo);
-        params.append('cantidad', item.cantidad);
+        params.append('platilloId',      item.idPlatillo);
+        params.append('cantidad',        item.cantidad);
+        params.append('personalizacion', item.personalizacion || '');
     });
     const btn = document.querySelector('.carrito-footer .btn-primario');
     if (btn) { btn.disabled = true; btn.textContent = 'Procesando...'; }
@@ -343,6 +348,8 @@ async function confirmarPedido() {
             credentials: 'same-origin'
         });
         carrito.items = []; actualizarBadgeCarrito();
+        const _notasEl = document.getElementById('notasPedido');
+        if (_notasEl) _notasEl.value = '';
         window.location.href = resp.redirected ? resp.url : ctx + '/pedido/historial';
     } catch (err) {
         mostrarMensaje('Error de conexión. Verifica tu red.', 'error');
