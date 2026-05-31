@@ -139,7 +139,7 @@
   <button class="btn btn-ghost" onclick="location.reload()"> Actualizar</button>
  </div>
 
- // Barra de progreso de auto-refresh
+ <!-- Barra de progreso de auto-refresh -->
  <div class="refresh-bar"></div>
 
  <!-- KPIs rápidos -->
@@ -174,7 +174,7 @@
   </div>
  </div>
 
- // Filtros
+ <!-- Filtros -->
  <div class="filtro-tabs">
   <button class="filtro-tab activo" onclick="filtrar('todos', this)">
    Todos <span class="filtro-count"><%= pedidos.size() %></span>
@@ -193,7 +193,7 @@
   </button>
  </div>
 
- // Grid de pedidos
+ <!-- Grid de pedidos -->
  <div id="pedidos-grid"
       style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;">
 
@@ -219,7 +219,7 @@
        data-estado="<%= p.getEstado().name() %>"
        data-tipo="<%= p.getTipo().name() %>">
 
-   // Header del pedido
+   <!-- Header del pedido -->
    <div class="pedido-cocina-header">
     <div>
      <div style="font-family:var(--fuente-display);font-weight:700;
